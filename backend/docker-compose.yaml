@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  api_db:
+    image: postgres:15
+    container_name: api_db
+    restart: always
+    command: -p ${API_DB_POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=${API_DB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${API_DB_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${API_DB_POSTGRES_DB}
+    networks:
+      - api_network
+    ports:
+      - "${API_DB_POSTGRES_PORT}:${API_DB_POSTGRES_PORT}"
+    expose:
+      - "${API_DB_POSTGRES_PORT}"
+    volumes:
+      - api_db_data:/var/lib/postgresql/data
+
+  api_pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: api_pgadmin
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${API_PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${API_PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "${API_PGADMIN_PORT}:80"
+    networks:
+      - api_network
+    depends_on:
+      - api_db
+    volumes:
+      - api_pgadmin_data:/var/lib/pgadmin
+
+  api_service:
+    build:
+      context: src/.
+      dockerfile: Dockerfile
+    container_name: api_service
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - api_db
+    networks:
+      - api_network
+    ports:
+      - "${API_PORT}:3000"
+
+networks:
+  api_network:
+    driver: bridge
+
+volumes:
+  api_db_data:
+    driver: local
+  api_pgadmin_data:
+    driver: local

@@ -21,3 +21,9 @@ class User:
         self.timezone = timezone
         self.notification_time = notification_time
 
+
+class Schedule:
+
+    def __init__(self, user_id: int, windows: list[list[int]]):
+        self.user_id = user_id
+        self.windows = windows

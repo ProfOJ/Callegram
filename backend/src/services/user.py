@@ -1,33 +1,54 @@
-from typing import Type
-
 from models.schema import UserSchemaUpdate, User
-from repositories.base import AbstractRepository
+from unit_of_work.unit_of_work import AbstractUnitOfWork
 
 
 class UserService:
-    def __init__(self, users_repo: Type[AbstractRepository]):
-        self.users_repo: AbstractRepository = users_repo()
 
-    async def add_user(self, user: User) -> str:
-        return await self.users_repo.add_one({
-            'id': user.id,
-            'name': user.name,
-            'timezone': user.timezone,
-            'notification_time': user.notification_time
-        })
+    @staticmethod
+    async def register_user(uow: AbstractUnitOfWork, user: User) -> int:
+        async with uow:
+            user_id = await uow.users.add_one({
+                'id': user.id,
+                'name': user.name,
+                'timezone': user.timezone,
+                'notification_time': [15, 30]  # default notification time
+            })
+            await uow.schedules.add_one({
+                'user_id': user_id,
+                'windows': [[9 * 60, 19 * 60] for _ in range(7)],  # 9:00 - 19:00 for every day
+            })
+            return user_id
 
-    async def get_users(self):
-        return await self.users_repo.find_all()
+    @staticmethod
+    async def add_user(uow: AbstractUnitOfWork, user: User) -> int:
+        async with uow:
+            return await uow.users.add_one({
+                'id': user.id,
+                'name': user.name,
+                'timezone': user.timezone,
+                'notification_time': user.notification_time
+            })
 
-    async def get_user(self, user_id: str):
-        return await self.users_repo.find_one_or_none(user_id)
+    @staticmethod
+    async def get_users(uow: AbstractUnitOfWork):
+        async with uow:
+            return await uow.users.find_all()
 
-    async def update_user(self, user_id: str, user: UserSchemaUpdate):
-        return await self.users_repo.update_one(user_id, {
-            'name': user.name,
-            'timezone': user.timezone,
-            'notification_time': user.notification_time
-        })
+    @staticmethod
+    async def get_user(uow: AbstractUnitOfWork, user_id: str):
+        async with uow:
+            return await uow.users.find_one_or_none(user_id)
 
-    async def delete_user(self, user_id: str):
-        return await self.users_repo.delete_one(user_id)
+    @staticmethod
+    async def update_user(uow: AbstractUnitOfWork, user_id: str, user: UserSchemaUpdate):
+        async with uow:
+            return await uow.users.update_one(user_id, {
+                'name': user.name,
+                'timezone': user.timezone,
+                'notification_time': user.notification_time
+            })
+
+    @staticmethod
+    async def delete_user(uow: AbstractUnitOfWork, user_id: str):
+        async with uow:
+            return await uow.users.delete_one(user_id)

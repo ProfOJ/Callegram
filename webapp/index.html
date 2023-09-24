@@ -18,18 +18,30 @@
     <!-- uncomment for debugging -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
 
-    <script src="assets/scripts/main.js"></script>
-    
+    <script src="assets/scripts/init.js"></script>
+    <script src="assets/scripts/app.js"></script>
+
     <!-- uncomment for debugging -->
     <!-- <script src="assets/scripts/debug.js"></script> -->
   </head>
 
   <body>
-    <script>
+    <script async>
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initApp(debug);
+      authUser().then((authData) => {
+        if (authData) {
+          const welcomeMessage = document.getElementById("welcomeMessage");
+          welcomeMessage.innerHTML = `Welcome ${authData.first_name}!`;
+          const loadingIndicator = document.getElementById("loadingIndicator");
+          loadingIndicator.style.display = "none";
+        }
+      });
     </script>
-    <main>Callegram</main>
+    <main>
+      <div id="loadingIndicator">Loading...</div>
+      <div id="welcomeMessage"></div>
+    </main>
     <!-- <div id="viewport"></div>
     <div id="viewport-params-size"></div>
     <div id="viewport-params-expand"></div> -->

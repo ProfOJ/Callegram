@@ -25,7 +25,7 @@ class AuthService:
             init_data_dict[key] = value
 
         if "user" not in init_data_dict or init_data_dict["user"] == "":
-            raise HTTPException(status_code=400, detail="User is required")
+            raise HTTPException(status_code=401, detail="User is required")
 
         user_dict = json.loads(init_data_dict["user"])
         init_data_dict["user"] = User(
@@ -57,7 +57,7 @@ class AuthService:
         init_data_base64 = request.headers.get("Authorization")
 
         if not init_data_base64:
-            raise HTTPException(status_code=403, detail="Not authorized")
+            raise HTTPException(status_code=401, detail="Not authorized")
 
         init_data_raw = base64.b64decode(init_data_base64).decode()
         init_data: InitData = self.decode_init_data(init_data_raw)
@@ -70,7 +70,7 @@ class AuthService:
         secret_key = hmac.new(b"WebAppData", self.bot_token.encode(), hashlib.sha256).digest()
         data_signature = hmac.new(secret_key, data_check_string.encode(), hashlib.sha256).hexdigest()
         if not hmac.compare_digest(init_data.hash, data_signature):
-            raise HTTPException(status_code=403, detail="Not authorized")
+            raise HTTPException(status_code=401, detail="Not authorized")
 
         self.init_data = init_data
 

@@ -49,18 +49,24 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def find_all(self):
+    async def find_all(self, **kwargs):
         stmt = select(self.model)
+        if 'options' in kwargs:
+            stmt = stmt.options(kwargs['options'])
         res = await self.session.execute(stmt)
         return [row[0].to_read_model() for row in res.all()]
 
-    async def find_one(self, id: str):
+    async def find_one(self, id: str, **kwargs):
         stmt = select(self.model).where(self.model.id == id)
+        if 'options' in kwargs:
+            stmt = stmt.options(kwargs['options'])
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def find_one_or_none(self, id: str):
+    async def find_one_or_none(self, id: str, **kwargs):
         stmt = select(self.model).where(self.model.id == id)
+        if 'options' in kwargs:
+            stmt = stmt.options(kwargs['options'])
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()
 
@@ -74,12 +80,16 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res
 
-    async def find_one_by(self, column: Column, value):
+    async def find_one_by(self, column: Column, value, **kwargs):
         stmt = select(self.model).where(column == value)
+        if 'options' in kwargs:
+            stmt = stmt.options(kwargs['options'])
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def find_one_or_none_by(self, column: Column, value):
+    async def find_one_or_none_by(self, column: Column, value, **kwargs):
         stmt = select(self.model).where(column == value)
+        if 'options' in kwargs:
+            stmt = stmt.options(kwargs['options'])
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()

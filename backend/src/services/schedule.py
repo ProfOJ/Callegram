@@ -1,4 +1,4 @@
-from models.schema import Schedule
+from models.view import Schedule
 from unit_of_work.unit_of_work import AbstractUnitOfWork
 
 

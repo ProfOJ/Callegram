@@ -41,6 +41,10 @@ class UserService:
     async def get_user(uow: AbstractUnitOfWork, user_id: str):
         async with uow:
             user = await uow.users.find_one_or_none(user_id)
+
+            if not user:
+                return None
+
             return User(
                 id=user.id,
                 name=user.name,
@@ -49,7 +53,7 @@ class UserService:
                 schedule=Schedule(
                     user_id=user.schedule.user_id,
                     windows=user.schedule.windows
-                )
+                ) if user.schedule else None
             )
 
     @staticmethod

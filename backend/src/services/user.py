@@ -1,4 +1,5 @@
-from models.schema import UserSchemaUpdate, User, Schedule
+from models.schema import UserSchemaUpdate
+from models.view import Schedule, User
 from unit_of_work.unit_of_work import AbstractUnitOfWork
 
 
@@ -38,7 +39,7 @@ class UserService:
             return await uow.users.find_all()
 
     @staticmethod
-    async def get_user(uow: AbstractUnitOfWork, user_id: str):
+    async def get_user(uow: AbstractUnitOfWork, user_id: int):
         async with uow:
             user = await uow.users.find_one_or_none(user_id)
 
@@ -57,7 +58,7 @@ class UserService:
             )
 
     @staticmethod
-    async def update_user(uow: AbstractUnitOfWork, user_id: str, user: UserSchemaUpdate):
+    async def update_user(uow: AbstractUnitOfWork, user_id: int, user: UserSchemaUpdate):
         async with uow:
             user = await uow.users.update_one(user_id, {
                 'name': user.name,
@@ -68,7 +69,7 @@ class UserService:
             return user
 
     @staticmethod
-    async def delete_user(uow: AbstractUnitOfWork, user_id: str):
+    async def delete_user(uow: AbstractUnitOfWork, user_id: int):
         async with uow:
             user_id = await uow.users.delete_one(user_id)
             await uow.commit()

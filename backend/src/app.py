@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dependencies import auth_service, UOWDep
 from models.schema import User, UserSchemaAuth
 from services.auth import AuthService
+from services.schedule import ScheduleService
 from services.user import UserService
 
 app = FastAPI()
@@ -37,12 +38,15 @@ async def root(
             timezone=user_auto_data.timezone,
             notification_time=[]  # default notification time is decided by the service
         ))
+        schedule = await ScheduleService.find_one_by_user_id(uow, auth.init_data.user.id)
+    else:
+        schedule = user.schedule
 
     return {
         "status": "ok",
         "message": "User authenticated",
         "data": {
-            "user_id": auth.init_data.user.id,
-            "first_name": auth.init_data.user.first_name,
+            "user": auth.init_data.user,
+            "schedule": schedule,
         }
     }

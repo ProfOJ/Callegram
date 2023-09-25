@@ -16,7 +16,15 @@ class UserService:
             })
             await uow.schedules.add_one({
                 'user_id': user_id,
-                'windows': [[9 * 60, 19 * 60] for _ in range(7)],  # 9:00 - 19:00 for every day
+                'windows': [
+                    [9 * 60, 19 * 60],
+                    [9 * 60, 19 * 60],
+                    [9 * 60, 19 * 60],
+                    [9 * 60, 19 * 60],
+                    [9 * 60, 19 * 60],
+                    [0, 0],
+                    [0, 0]
+                ],  # 9:00 - 19:00 for every day
             })
             await uow.commit()
             return user_id

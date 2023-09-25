@@ -1,3 +1,5 @@
+import datetime
+
 from models.view import Schedule
 from unit_of_work.unit_of_work import AbstractUnitOfWork
 
@@ -49,3 +51,33 @@ class ScheduleService:
                 user_id=schedule.user_id,
                 windows=schedule.windows
             )
+
+    @staticmethod
+    async def get_date_availability(uow: AbstractUnitOfWork, user_id: int, date: datetime.date):
+        async with uow:
+            schedule = await uow.schedules.find_one_by_user_id(user_id)
+            if not schedule:
+                return None
+
+            events = await uow.calendar_events.find_all_at_date(user_id, date)
+            if not events:
+                return None
+
+            availability = {}
+            weekday = date.weekday()
+            start_hour = schedule.windows[weekday][0] // 60
+            end_hour = schedule.windows[weekday][1] // 60
+
+            for hour in range(start_hour, end_hour):
+                availability[hour] = [0, 30]
+
+            for event in events:
+                event_start_hour = event.appointment_time.hour
+                event_start_minute = event.appointment_time.minute
+
+                if len(availability[event_start_hour]) == 2:
+                    availability[event_start_hour].remove(event_start_minute)
+                else:
+                    availability.pop(event_start_hour)
+
+            return availability

@@ -1,11 +1,8 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from dependencies import auth_service, UOWDep
-from models.schema import User, UserSchemaAuth
-from services.auth import AuthService
-from services.schedule import ScheduleService
-from services.user import UserService
+from routes.user import router as user_router
+from routes.events import router as event_router
 
 app = FastAPI()
 
@@ -22,31 +19,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.post("/auth")
-async def root(
-        user_auto_data: UserSchemaAuth,
-        uow: UOWDep,
-        auth: AuthService = Depends(auth_service),
-):
-    user = await UserService.get_user(uow, auth.init_data.user.id)
-
-    if not user:
-        await UserService.register_user(uow, User(
-            id=auth.init_data.user.id,
-            name=auth.init_data.user.first_name,
-            timezone=user_auto_data.timezone,
-            notification_time=[]  # default notification time is decided by the service
-        ))
-        schedule = await ScheduleService.find_one_by_user_id(uow, auth.init_data.user.id)
-    else:
-        schedule = user.schedule
-
-    return {
-        "status": "ok",
-        "message": "User authenticated",
-        "data": {
-            "user": auth.init_data.user,
-            "schedule": schedule,
-        }
-    }
+app.include_router(
+    user_router,
+    prefix="/user",
+    tags=["user"]
+)
+app.include_router(
+    event_router,
+    prefix="/event",
+    tags=["event"]
+)

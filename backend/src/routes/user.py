@@ -33,7 +33,12 @@ async def root(
         success=True,
         message="User authenticated",
         data={
-            "user": auth.init_data.user,
-            "schedule": schedule
+            "user": User(
+                id=auth.init_data.user.id,
+                name=auth.init_data.user.first_name,
+                timezone=user_auto_data.timezone,
+                notification_time=user.notification_time,
+                schedule=schedule
+            )
         }
     )

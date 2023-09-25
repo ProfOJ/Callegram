@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from fastapi import APIRouter
 from fastapi import Depends
 
@@ -71,6 +73,8 @@ async def schedule_appointment(
             success=False,
             message="Owner user not found",
         )
+
+    appointment.duration = timedelta(minutes=30)  # default duration is 30 minutes
 
     if not is_event_inside_schedule(appointment, user):
         return ApiResponse(
@@ -170,6 +174,8 @@ async def edit_appointment(
             success=False,
             message="Owner user not found",
         )
+
+    appointment.duration = timedelta(minutes=30)  # default duration is 30 minutes
 
     if not is_event_inside_schedule(event, user):
         return ApiResponse(

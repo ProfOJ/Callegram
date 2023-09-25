@@ -60,8 +60,6 @@ class ScheduleService:
                 return None
 
             events = await uow.calendar_events.find_all_at_date(user_id, date)
-            if not events:
-                return None
 
             availability = {}
             weekday = date.weekday()

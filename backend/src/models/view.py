@@ -17,7 +17,7 @@ class User(BaseModel):
 
 
 class CalendarEvent(BaseModel):
-    id: int
+    id: str
     owner_user_id: int
     invited_user_id: int
     appointment_time: datetime

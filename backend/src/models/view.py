@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -13,7 +14,7 @@ class User(BaseModel):
     name: str
     timezone: int
     notification_time: list[int]
-    schedule: Schedule = None
+    schedule: Optional[Schedule]
 
 
 class CalendarEvent(BaseModel):

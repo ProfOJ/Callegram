@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("/auth")
-async def root(
+async def user_auth(
         user_auto_data: UserSchemaAuth,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),

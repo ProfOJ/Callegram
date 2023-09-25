@@ -30,6 +30,11 @@ async def get_day_availability(
         success=True,
         message="Day availability retrieved",
         data={
-            "day_availability": day_availability
+            "day_availability": day_availability,
+            "user_info": {
+                "id": user.id,
+                "name": user.name,
+                "timezone": user.timezone,
+            }
         }
     )

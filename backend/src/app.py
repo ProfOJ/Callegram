@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from routes.user import router as user_router
 from routes.events import router as event_router
+from routes.schedules import router as schedule_router
 
 app = FastAPI()
 
@@ -28,4 +29,9 @@ app.include_router(
     event_router,
     prefix="/event",
     tags=["event"]
+)
+app.include_router(
+    schedule_router,
+    prefix="/schedule",
+    tags=["schedule"]
 )

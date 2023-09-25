@@ -15,7 +15,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         )
         return [
             CalendarEvent(
-                id=event.id,
+                id=str(event.id),
                 owner_user_id=event.owner_user_id,
                 invited_user_id=event.invited_user_id,
                 appointment_time=event.appointment_time,
@@ -30,7 +30,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         print(events)
         return [
             CalendarEvent(
-                id=event.id,
+                id=str(event.id),
                 owner_user_id=event.owner_user_id,
                 invited_user_id=event.invited_user_id,
                 appointment_time=event.appointment_time,
@@ -41,7 +41,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
     async def find_one(self, id: str, **kwargs):
         event = await super().find_one(id)
         return CalendarEvent(
-            id=event.id,
+            id=str(event.id),
             owner_user_id=event.owner_user_id,
             invited_user_id=event.invited_user_id,
             appointment_time=event.appointment_time,
@@ -52,7 +52,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         event = await super().find_one_or_none(id)
 
         return CalendarEvent(
-            id=event.id,
+            id=str(event.id),
             owner_user_id=event.owner_user_id,
             invited_user_id=event.invited_user_id,
             appointment_time=event.appointment_time,
@@ -63,7 +63,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         event = await super().find_one_or_none_by(self.model.user_id, user_id)
 
         return CalendarEvent(
-            id=event.id,
+            id=str(event.id),
             owner_user_id=event.owner_user_id,
             invited_user_id=event.invited_user_id,
             appointment_time=event.appointment_time,
@@ -76,7 +76,7 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         ])
 
         return CalendarEvent(
-            id=event.id,
+            id=str(event.id),
             owner_user_id=event.owner_user_id,
             invited_user_id=event.invited_user_id,
             appointment_time=event.appointment_time,

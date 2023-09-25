@@ -14,17 +14,17 @@ class UserService:
                 'timezone': user.timezone,
                 'notification_time': [15, 30]  # default notification time
             })
-            await uow.schedules.add_one({
+            schedule_id = await uow.schedules.add_one({
                 'user_id': user_id,
                 'windows': [
-                    [9 * 60, 19 * 60],
-                    [9 * 60, 19 * 60],
-                    [9 * 60, 19 * 60],
-                    [9 * 60, 19 * 60],
-                    [9 * 60, 19 * 60],
-                    [0, 0],
-                    [0, 0]
-                ],  # 9:00 - 19:00 for every day
+                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [0, 0],  # unavailable on weekends
+                    [0, 0],  # unavailable on weekends
+                ],
             })
             await uow.commit()
             return user_id

@@ -1,3 +1,14 @@
+from datetime import datetime, timedelta
+
+
+class ApiResponse:
+
+    def __init__(self, success: bool, message: str, data=None):
+        self.success = success
+        self.message = message
+        self.data = data
+
+
 class Schedule:
 
     def __init__(self, user_id: int, windows: list[list[int]]):
@@ -13,3 +24,20 @@ class User:
         self.timezone = timezone
         self.notification_time = notification_time
         self.schedule = schedule
+
+
+class CalendarEvent:
+
+    def __init__(
+            self,
+            id: int,
+            owner_user_id: int,
+            invited_user_id: int,
+            appointment_time: datetime,
+            duration: timedelta
+    ):
+        self.id = id
+        self.owner_user_id = owner_user_id
+        self.invited_user_id = invited_user_id
+        self.appointment_time = appointment_time
+        self.duration = duration

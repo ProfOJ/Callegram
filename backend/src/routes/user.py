@@ -12,7 +12,7 @@ router = APIRouter()
 
 @router.post("/auth")
 async def user_auth(
-        user_auto_data: UserSchemaAuth,
+        user_auth_data: UserSchemaAuth,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
@@ -22,7 +22,7 @@ async def user_auth(
         await UserService.register_user(uow, User(
             id=auth.init_data.user.id,
             name=auth.init_data.user.first_name,
-            timezone=user_auto_data.timezone,
+            timezone=user_auth_data.timezone,
             notification_time=[]  # default notification time is decided by the service
         ))
         schedule = await ScheduleService.find_one_by_user_id(uow, auth.init_data.user.id)
@@ -36,7 +36,7 @@ async def user_auth(
             "user": User(
                 id=auth.init_data.user.id,
                 name=auth.init_data.user.first_name,
-                timezone=user_auto_data.timezone,
+                timezone=user_auth_data.timezone,
                 notification_time=user.notification_time,
                 schedule=schedule
             )

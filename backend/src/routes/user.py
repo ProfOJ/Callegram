@@ -44,3 +44,32 @@ async def user_auth(
             )
         }
     )
+
+
+@router.get("/info/{user_id}")
+async def get_user_info(
+        user_id: int,
+        uow: UOWDep,
+        _: AuthService = Depends(auth_service),
+) -> ApiResponse:
+    user = await UserService.get_user(uow, user_id)
+
+    if not user:
+        return ApiResponse(
+            success=False,
+            message="User not found",
+        )
+
+    return ApiResponse(
+        success=True,
+        message="User info retrieved",
+        data={
+            "user": User(
+                id=user.id,
+                name=user.name,
+                timezone=user.timezone,
+                notification_time=[],
+                schedule=None
+            )
+        }
+    )

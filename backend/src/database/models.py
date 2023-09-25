@@ -44,5 +44,5 @@ class CalendarEvent(Base):
     updated_at = Column(DateTime, nullable=False, server_default=func.now(),
                         server_onupdate=func.now())
 
-    owner_user = relationship(User, uselist=False, foreign_keys=[owner_user_id], lazy='immediate', viewonly=True)
-    invited_user = relationship(User, uselist=False, foreign_keys=[invited_user_id], lazy='immediate', viewonly=True)
+    owner_user = relationship(User, uselist=False, foreign_keys=owner_user_id, lazy='immediate', viewonly=True)
+    invited_user = relationship(User, uselist=False, foreign_keys=invited_user_id, lazy='immediate', viewonly=True)

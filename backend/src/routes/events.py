@@ -3,12 +3,49 @@ from fastapi import Depends
 
 from dependencies import auth_service, UOWDep
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate
-from models.view import ApiResponse
+from models.view import ApiResponse, CalendarEvent, User
 from services.auth import AuthService
 from services.event import CalendarEventService
 from services.user import UserService
 
 router = APIRouter()
+
+
+def is_event_overlapping(
+        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate,
+        events: list[CalendarEvent]
+):
+    for event in events:
+        if event.appointment_time.weekday() != new_event.appointment_time.weekday():
+            continue
+
+        event_start_time = event.appointment_time.hour * 60 + event.appointment_time.minute
+        event_end_time = event_start_time + event.duration.seconds // 60
+
+        start_time = new_event.appointment_time.hour * 60 + new_event.appointment_time.minute
+        end_time = start_time + new_event.duration.seconds // 60
+
+        latest_start_time = max(start_time, event_start_time)
+        earliest_end_time = min(end_time, event_end_time)
+
+        if latest_start_time < earliest_end_time:
+            return True
+
+    return False
+
+
+def is_event_inside_schedule(
+        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate,
+        user: User
+):
+    weekday = new_event.appointment_time.weekday()
+    start_time = new_event.appointment_time.hour * 60 + new_event.appointment_time.minute
+    end_time = start_time + new_event.duration.seconds // 60
+
+    if start_time < user.schedule.windows[weekday][0] or end_time > user.schedule.windows[weekday][1]:
+        return False
+
+    return True
 
 
 @router.post("/create")
@@ -31,39 +68,20 @@ async def schedule_appointment(
             message="Owner user not found",
         )
 
-    # check if the appointment is inside the schedule
-
-    weekday = appointment.appointment_time.weekday()
-    start_time = appointment.appointment_time.hour * 60 + appointment.appointment_time.minute
-    end_time = start_time + appointment.duration.seconds // 60
-
-    if start_time < user.schedule.windows[weekday][0] or end_time > user.schedule.windows[weekday][1]:
-        print(start_time, end_time, user.schedule.windows[weekday])
+    if not is_event_inside_schedule(appointment, user):
         return ApiResponse(
             success=False,
             message="Appointment is not inside the schedule",
         )
 
-    # check if there is no overlapping or intersecting appointment for owner or invited user
-
     events = await CalendarEventService.get_events(appointment.owner_user_id, uow)
     events += await CalendarEventService.get_events(appointment.invited_user_id, uow)
 
-    for event in events:
-        if event.appointment_time.weekday() != weekday:
-            continue
-
-        event_start_time = event.appointment_time.hour * 60 + event.appointment_time.minute
-        event_end_time = event_start_time + event.duration.seconds // 60
-
-        latest_start_time = max(start_time, event_start_time)
-        earliest_end_time = min(end_time, event_end_time)
-
-        if latest_start_time < earliest_end_time:
-            return ApiResponse(
-                success=False,
-                message="Appointment is overlapping with existing appointment",
-            )
+    if is_event_overlapping(appointment, events):
+        return ApiResponse(
+            success=False,
+            message="Appointment is overlapping with existing appointment",
+        )
 
     event_id = await CalendarEventService.add_event(uow, appointment)
 
@@ -141,32 +159,28 @@ async def edit_appointment(
             message="You are not authorized to edit this appointment",
         )
 
-    # check for overlapping or intersecting appointment for owner or invited user
+    user = await UserService.get_user(uow, appointment.owner_user_id)
+
+    if not user:
+        return ApiResponse(
+            success=False,
+            message="Owner user not found",
+        )
+
+    if not is_event_inside_schedule(appointment, user):
+        return ApiResponse(
+            success=False,
+            message="Appointment is not inside the schedule",
+        )
 
     events = await CalendarEventService.get_events(appointment.owner_user_id, uow)
     events += await CalendarEventService.get_events(appointment.invited_user_id, uow)
 
-    for event in events:
-        if event.id == event_id:
-            continue
-
-        if event.appointment_time.weekday() != appointment.appointment_time.weekday():
-            continue
-
-        event_start_time = event.appointment_time.hour * 60 + event.appointment_time.minute
-        event_end_time = event_start_time + event.duration.seconds // 60
-
-        start_time = appointment.appointment_time.hour * 60 + appointment.appointment_time.minute
-        end_time = start_time + appointment.duration.seconds // 60
-
-        latest_start_time = max(start_time, event_start_time)
-        earliest_end_time = min(end_time, event_end_time)
-
-        if latest_start_time < earliest_end_time:
-            return ApiResponse(
-                success=False,
-                message="Appointment is overlapping with existing appointment",
-            )
+    if is_event_overlapping(appointment, events):
+        return ApiResponse(
+            success=False,
+            message="Appointment is overlapping with existing appointment",
+        )
 
     await CalendarEventService.edit_event(uow, event_id, appointment)
 

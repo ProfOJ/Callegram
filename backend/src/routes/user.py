@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
 from dependencies import UOWDep, auth_service
-from models.schema import UserSchemaAuth
-from models.view import User, ApiResponse
+from models.schema import UserSchemaAuth, ApiResponse
+from models.view import User
 from services.auth import AuthService
 from services.schedule import ScheduleService
 from services.user import UserService
@@ -15,7 +15,7 @@ async def root(
         user_auto_data: UserSchemaAuth,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
-):
+) -> ApiResponse:
     user = await UserService.get_user(uow, auth.init_data.user.id)
 
     if not user:

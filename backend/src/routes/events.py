@@ -2,8 +2,8 @@ from fastapi import APIRouter
 from fastapi import Depends
 
 from dependencies import auth_service, UOWDep
-from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate
-from models.view import ApiResponse, CalendarEvent, User
+from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate, ApiResponse
+from models.view import CalendarEvent, User
 from services.auth import AuthService
 from services.event import CalendarEventService
 from services.user import UserService
@@ -53,7 +53,7 @@ async def schedule_appointment(
         appointment: CalendarEventSchemaAdd,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
-):
+) -> ApiResponse:
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
@@ -98,7 +98,7 @@ async def schedule_appointment(
 async def get_appointments(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
-):
+) -> ApiResponse:
     events = await CalendarEventService.get_events_by_user_id(auth.init_data.user.id, uow)
 
     return ApiResponse(
@@ -115,7 +115,7 @@ async def delete_appointment(
         event_id: str,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
-):
+) -> ApiResponse:
     event = await CalendarEventService.get_event(event_id, uow)
 
     if not event:
@@ -144,7 +144,7 @@ async def edit_appointment(
         appointment: CalendarEventSchemaUpdate,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
-):
+) -> ApiResponse:
     event = await CalendarEventService.get_event(event_id, uow)
 
     if not event:

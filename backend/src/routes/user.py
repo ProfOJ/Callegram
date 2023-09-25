@@ -23,8 +23,10 @@ async def user_auth(
             id=auth.init_data.user.id,
             name=auth.init_data.user.first_name,
             timezone=user_auth_data.timezone,
-            notification_time=[]  # default notification time is decided by the service
+            notification_time=[],  # default notification time is decided by the service
+            schedule=None
         ))
+        user = await UserService.get_user(uow, auth.init_data.user.id)
         schedule = await ScheduleService.find_one_by_user_id(uow, auth.init_data.user.id)
     else:
         schedule = user.schedule

@@ -12,11 +12,15 @@ router = APIRouter()
 
 
 def is_event_overlapping(
-        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate,
-        events: list[CalendarEvent]
+        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate | CalendarEvent,
+        events: list[CalendarEvent],
+        old_event_id: str | None = None
 ):
     for event in events:
         if event.appointment_time.weekday() != new_event.appointment_time.weekday():
+            continue
+
+        if event.id == old_event_id:
             continue
 
         event_start_time = event.appointment_time.hour * 60 + event.appointment_time.minute
@@ -35,7 +39,7 @@ def is_event_overlapping(
 
 
 def is_event_inside_schedule(
-        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate,
+        new_event: CalendarEventSchemaAdd | CalendarEventSchemaUpdate | CalendarEvent,
         user: User
 ):
     weekday = new_event.appointment_time.weekday()
@@ -145,7 +149,7 @@ async def edit_appointment(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
-    event = await CalendarEventService.get_event(event_id, uow)
+    event: CalendarEvent = await CalendarEventService.get_event(event_id, uow)
 
     if not event:
         return ApiResponse(
@@ -159,7 +163,7 @@ async def edit_appointment(
             message="You are not authorized to edit this appointment",
         )
 
-    user = await UserService.get_user(uow, appointment.owner_user_id)
+    user = await UserService.get_user(uow, event.owner_user_id)
 
     if not user:
         return ApiResponse(
@@ -167,16 +171,16 @@ async def edit_appointment(
             message="Owner user not found",
         )
 
-    if not is_event_inside_schedule(appointment, user):
+    if not is_event_inside_schedule(event, user):
         return ApiResponse(
             success=False,
             message="Appointment is not inside the schedule",
         )
 
-    events = await CalendarEventService.get_events(appointment.owner_user_id, uow)
-    events += await CalendarEventService.get_events(appointment.invited_user_id, uow)
+    events = await CalendarEventService.get_events(event.owner_user_id, uow)
+    events += await CalendarEventService.get_events(event.invited_user_id, uow)
 
-    if is_event_overlapping(appointment, events):
+    if is_event_overlapping(appointment, events, event_id):
         return ApiResponse(
             success=False,
             message="Appointment is overlapping with existing appointment",

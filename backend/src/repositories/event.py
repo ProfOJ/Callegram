@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy.sql.operators import or_
 
 from database.models import CalendarEvent as CalendarEventEntity
@@ -82,3 +84,20 @@ class CalendarEventsRepository(SQLAlchemyRepository):
             appointment_time=event.appointment_time,
             duration=event.duration
         ) if event else None
+
+    async def find_all_at_date(self, user_id: int, date: datetime.date):
+        events = await super().find_all_by_filter([
+            (self.model.owner_user_id == user_id),
+            (self.model.appointment_time >= date),
+            (self.model.appointment_time < date + datetime.timedelta(days=1))
+        ])
+
+        return [
+            CalendarEvent(
+                id=str(event.id),
+                owner_user_id=event.owner_user_id,
+                invited_user_id=event.invited_user_id,
+                appointment_time=event.appointment_time,
+                duration=event.duration
+            ) for event in events
+        ]

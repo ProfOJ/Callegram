@@ -32,7 +32,7 @@
       authUser().then((authData) => {
         if (authData) {
           const welcomeMessage = document.getElementById("welcomeMessage");
-          welcomeMessage.innerHTML = `Welcome ${authData.user.first_name}!`;
+          welcomeMessage.innerHTML = `Welcome ${authData.user.name}!`;
           const loadingIndicator = document.getElementById("loadingIndicator");
           loadingIndicator.style.display = "none";
         }

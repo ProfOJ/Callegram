@@ -17,7 +17,7 @@ function initApp(debug = false) {
 }
 
 async function authUser() {
-  const response = await fetch("http://127.0.0.1:5000/auth", {
+  const response = await fetch("http://127.0.0.1:5000/user/auth", {
     headers: {
       Authorization: btoa(Telegram.WebApp.initData),
       "Content-Type": "application/json",
@@ -36,7 +36,7 @@ async function authUser() {
 
   const data = await response.json();
 
-  if (data.status === "ok") {
+  if (data.success) {
     return data.data;
   }
 }

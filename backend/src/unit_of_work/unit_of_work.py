@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
 from database.database import async_session_maker
+from repositories.event import CalendarEventsRepository
 from repositories.schedule import SchedulesRepository
 from repositories.user import UsersRepository
 
@@ -8,6 +9,7 @@ from repositories.user import UsersRepository
 class AbstractUnitOfWork(ABC):
     users: UsersRepository
     schedules: SchedulesRepository
+    calendar_events: CalendarEventsRepository
 
     @abstractmethod
     def __init__(self):
@@ -39,6 +41,7 @@ class UnitOfWork:
 
         self.users: UsersRepository = UsersRepository(self.session)
         self.schedules: SchedulesRepository = SchedulesRepository(self.session)
+        self.calendar_events: CalendarEventsRepository = CalendarEventsRepository(self.session)
 
     async def __aexit__(self, *args):
         await self.rollback()

@@ -55,3 +55,7 @@
     font-weight: bold;
     height: 20px !important;
 }
+
+.weekDayName.weekend {
+    font-weight: normal;
+}

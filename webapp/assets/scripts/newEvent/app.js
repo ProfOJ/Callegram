@@ -24,6 +24,42 @@ async function getOwnerAppointmentInfo() {
   return responseData.data.user;
 }
 
+function onDayClicked(event) {
+  const allDays = document.getElementsByClassName("weekDay");
+  for (const day of allDays) {
+    day.classList.remove("selected");
+  }
+
+  const element = event.target;
+  element.classList.add("selected");
+}
+
+function populateDays() {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const today = new Date();
+  const todayDay = today.getDay();
+
+  const weekDayNames = document.getElementsByClassName("weekDayName");
+  for (let i = 0; i < weekDayNames.length; i++) {
+    const weekDayName = weekDayNames[i];
+    const dayIndex = (todayDay + i) % 7; // 0 - 6
+    weekDayName.innerText = days[dayIndex];
+
+    if (dayIndex === 0 || dayIndex === 6) { // Sunday or Saturday
+      weekDayName.classList.add("weekend");
+    }
+  }
+
+  const weekDayDates = document.getElementsByClassName("weekDay");
+  for (let i = 0; i < weekDayDates.length; i++) {
+    const weekDayDate = weekDayDates[i];
+    const date = new Date(today);
+    date.setDate(date.getDate() + i);
+    weekDayDate.innerText = date.getDate();
+  }
+}
+
 async function main() {
   const authData = await authUser();
   if (!authData) {
@@ -35,23 +71,13 @@ async function main() {
     return;
   }
 
-  console.log(ownerInfo);
-
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
   scheduleOwnerNameEl.innerText = ownerInfo.name;
+
+  populateDays();
 
   const weekDayElements = document.getElementsByClassName("weekDay");
   for (const weekDayElement of weekDayElements) {
     weekDayElement.addEventListener("click", onDayClicked);
   }
-}
-
-function onDayClicked(event) {
-  const allDays = document.getElementsByClassName("weekDay");
-  for (const day of allDays) {
-    day.classList.remove("selected");
-  }
-
-  const element = event.target;
-  element.classList.add("selected");
 }

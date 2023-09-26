@@ -32,6 +32,8 @@ function onDayClicked(event) {
 
   const element = event.target;
   element.classList.add("selected");
+  const date = new Date(element.getAttribute("data-date"));
+  console.log(date);
 }
 
 function populateDays() {
@@ -46,7 +48,8 @@ function populateDays() {
     const dayIndex = (todayDay + i) % 7; // 0 - 6
     weekDayName.innerText = days[dayIndex];
 
-    if (dayIndex === 0 || dayIndex === 6) { // Sunday or Saturday
+    if (dayIndex === 0 || dayIndex === 6) {
+      // Sunday or Saturday
       weekDayName.classList.add("weekend");
     }
   }
@@ -57,6 +60,8 @@ function populateDays() {
     const date = new Date(today);
     date.setDate(date.getDate() + i);
     weekDayDate.innerText = date.getDate();
+    date.setHours(0, 0, 0, 0);
+    weekDayDate.setAttribute("data-date", date.toISOString());
   }
 }
 
@@ -73,8 +78,6 @@ async function main() {
 
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
   scheduleOwnerNameEl.innerText = ownerInfo.name;
-
-  populateDays();
 
   const weekDayElements = document.getElementsByClassName("weekDay");
   for (const weekDayElement of weekDayElements) {

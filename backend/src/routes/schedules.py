@@ -3,7 +3,7 @@ import datetime
 from fastapi import APIRouter, Depends
 
 from dependencies import UOWDep, auth_service
-from models.schema import ApiResponse, ScheduleSchemaDayAvailability
+from models.schema import ApiResponse
 from services.auth import AuthService
 from services.schedule import ScheduleService
 from services.user import UserService

@@ -69,7 +69,7 @@ async def get_user_info(
                 name=user.name,
                 timezone=user.timezone,
                 notification_time=[],
-                schedule=None
+                schedule=user.schedule
             )
         }
     )

@@ -11,6 +11,7 @@ body {
 a {
     color: var(--tg-theme-link-color);
 }
+
 #viewport {
     position: fixed;
     left: 0;
@@ -20,6 +21,7 @@ a {
     pointer-events: none;
     transition: all .2s ease;
 }
+
 #viewport:after {
     content: '';
     display: block;
@@ -45,9 +47,16 @@ a {
     padding: 4px;
     vertical-align: top;
 }
+
 #viewport-params-size {
     top: 4px;
 }
+
 #viewport-params-expand {
     top: 30px;
+}
+
+main {
+    width: 100%;
+    height: 100%;
 }

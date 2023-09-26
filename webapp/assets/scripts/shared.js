@@ -1,3 +1,13 @@
+function stopLoading() {
+  document.getElementById("loading").style.display = "none";
+  document.getElementsByTagName("main")[0].style.display = "block";
+}
+
+function startLoading() {
+  document.getElementById("loading").style.display = "block";
+  document.getElementsByTagName("main")[0].style.display = "none";
+}
+
 function themeChangedCallback() {
   document.documentElement.className = Telegram.WebApp.colorScheme;
   document.body.setAttribute(
@@ -16,6 +26,15 @@ function initApp(debug = false) {
   }
 }
 
+function getInitData() {
+  const initData = new URLSearchParams(Telegram.WebApp.initData);
+  const initDataObject = {};
+  for (const [key, value] of initData) {
+    initDataObject[key] = value;
+  }
+  return initDataObject;
+}
+
 async function authUser() {
   const response = await fetch("http://127.0.0.1:5000/user/auth", {
     headers: {
@@ -25,7 +44,7 @@ async function authUser() {
     mode: "cors",
     method: "POST",
     body: JSON.stringify({
-      timezone: new Date().getTimezoneOffset() * 60,
+      timezone: new Date().getTimezoneOffset(),
     }),
   });
 
@@ -37,6 +56,11 @@ async function authUser() {
   const data = await response.json();
 
   if (data.success) {
+    localStorage.setItem("user", data.data.user);
     return data.data;
   }
+}
+
+function getUser() {
+  return localStorage.getItem("user");
 }

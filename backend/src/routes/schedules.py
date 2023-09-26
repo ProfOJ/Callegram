@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import APIRouter, Depends
 
 from dependencies import UOWDep, auth_service
@@ -12,7 +14,7 @@ router = APIRouter()
 @router.get("/day_availability/{user_id}")
 async def get_day_availability(
         user_id: int,
-        query: ScheduleSchemaDayAvailability,
+        date: datetime.date,
         uow: UOWDep,
         _: AuthService = Depends(auth_service),
 ) -> ApiResponse:
@@ -24,7 +26,7 @@ async def get_day_availability(
             message="User not found",
         )
 
-    day_availability = await ScheduleService.get_date_availability(uow, user_id, query.date)
+    day_availability = await ScheduleService.get_date_availability(uow, user_id, date)
 
     return ApiResponse(
         success=True,

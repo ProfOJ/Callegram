@@ -32,6 +32,3 @@ class CalendarEventSchemaUpdate(BaseModel):
     appointment_time: datetime.datetime
     duration: datetime.timedelta
 
-
-class ScheduleSchemaDayAvailability(BaseModel):
-    date: datetime.date

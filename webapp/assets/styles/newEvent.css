@@ -1,0 +1,57 @@
+.scheduleStep {
+    font-size: large;
+}
+
+.scheduleWeekDays {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0px 5px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . . . . . ."
+        ". . . . . . .";
+}
+
+.weekDay {
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+    line-height: 30px;
+    border-radius: 50%;
+    font-size: large;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    transition: all .2s ease;
+}
+
+.weekDay.selected {
+    background-color: transparent;
+    border: 1px solid var(--tg-theme-text-color);
+}
+
+.weekDay.today {
+    border: 2px solid var(--tg-theme-text-color);
+    font-weight: bold;
+}
+
+.scheduleWeekNames {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 5px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        ". . . . . . .";
+    margin-bottom: 10px;
+}
+
+.weekDayName {
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    height: 20px !important;
+}

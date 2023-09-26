@@ -37,8 +37,21 @@ async function main() {
 
   console.log(ownerInfo);
 
-  stopLoading();
+  const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
+  scheduleOwnerNameEl.innerText = ownerInfo.name;
 
-  const eventTitle = document.getElementById("eventTitle");
-  eventTitle.innerHTML = `<p>Scheduling a call with <span class="font-bold">${ownerInfo.name}</span></p>`;
+  const weekDayElements = document.getElementsByClassName("weekDay");
+  for (const weekDayElement of weekDayElements) {
+    weekDayElement.addEventListener("click", onDayClicked);
+  }
+}
+
+function onDayClicked(event) {
+  const allDays = document.getElementsByClassName("weekDay");
+  for (const day of allDays) {
+    day.classList.remove("selected");
+  }
+
+  const element = event.target;
+  element.classList.add("selected");
 }

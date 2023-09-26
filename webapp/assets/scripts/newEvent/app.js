@@ -1,6 +1,5 @@
 async function getOwnerAppointmentInfo() {
   const initData = getInitData();
-
   const owner_user_id = initData.start_param.split("_")[1];
 
   const response = await fetch(
@@ -14,14 +13,43 @@ async function getOwnerAppointmentInfo() {
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
-  const responseData = await response.json();
 
+  const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.showAlert(data.message);
     return;
   }
 
   return responseData.data.user;
+}
+
+async function getDayAvailability(date) {
+  const initData = getInitData();
+  const owner_user_id = initData.start_param.split("_")[1];
+
+  date = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+  );
+
+  const response = await fetch(
+    `http://localhost:5000/schedule/day_availability/${owner_user_id}?date=${date.toISOString()}`,
+    {
+      headers: getCommonHeaders(),
+      mode: "cors",
+    }
+  );
+  if (response.status === 401) {
+    Telegram.WebApp.showAlert("Unauthenticated");
+    return;
+  }
+
+  const responseData = await response.json();
+  if (!responseData.success) {
+    Telegram.WebApp.showAlert(data.message);
+    return;
+  }
+
+  return responseData.data.day_availability;
 }
 
 function onDayClicked(event) {
@@ -33,7 +61,9 @@ function onDayClicked(event) {
   const element = event.target;
   element.classList.add("selected");
   const date = new Date(element.getAttribute("data-date"));
-  console.log(date);
+  getDayAvailability(date).then((availability) => {
+    console.log(availability);
+  });
 }
 
 function populateDays() {
@@ -60,7 +90,6 @@ function populateDays() {
     const date = new Date(today);
     date.setDate(date.getDate() + i);
     weekDayDate.innerText = date.getDate();
-    date.setHours(0, 0, 0, 0);
     weekDayDate.setAttribute("data-date", date.toISOString());
   }
 }

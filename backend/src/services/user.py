@@ -17,11 +17,11 @@ class UserService:
             schedule_id = await uow.schedules.add_one({
                 'user_id': user_id,
                 'windows': [
-                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
-                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
-                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
-                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
-                    [9 * 60 + user.timezone * -1, 19 * 60 + user.timezone * -1],
+                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
+                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
+                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
+                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
+                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
                     [0, 0],  # unavailable on weekends
                     [0, 0],  # unavailable on weekends
                 ],

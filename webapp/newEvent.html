@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>New Appointment</title>
+    <link defer async rel="stylesheet" href="assets/styles/shared.css" />
+    <!-- original version -->
+    <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
+
+    <!-- minified and compressed version which improves loading time by ~45% -->
+    <script src="assets/scripts/telegram-web-app.js"></script>
+
+    <!-- uncomment for debugging -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
+
+    <script src="assets/scripts/shared.js"></script>
+    <script src="assets/scripts/newEvent/app.js"></script>
+  </head>
+  <body>
+    <script>
+      const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
+      initApp(debug);
+
+      authUser().then((authData) => {
+        if (authData) {
+          stopLoading();
+        }
+      });
+    </script>
+
+    <div id="loading">Loading...</div>
+    <main></main>
+  </body>
+</html>

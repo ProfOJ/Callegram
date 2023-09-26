@@ -25,15 +25,16 @@
     font-size: large;
     background-color: var(--tg-theme-button-color);
     color: var(--tg-theme-button-text-color);
-    transition: all .2s ease;
-}
-
-.weekDay.selected {
-    background-color: transparent;
-    border: 1px solid var(--tg-theme-text-color);
+    cursor: pointer;
 }
 
 .weekDay.today {
+    background-color: transparent;
+    border: 2px solid var(--tg-theme-button-color);
+    color: var(--tg-theme-text-color);
+}
+
+.weekDay.selected {
     border: 2px solid var(--tg-theme-text-color);
     font-weight: bold;
 }

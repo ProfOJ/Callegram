@@ -78,8 +78,8 @@ function populateDays() {
     const dayIndex = (todayDay + i) % 7; // 0 - 6
     weekDayName.innerText = days[dayIndex];
 
+    // Sunday or Saturday
     if (dayIndex === 0 || dayIndex === 6) {
-      // Sunday or Saturday
       weekDayName.classList.add("weekend");
     }
   }
@@ -91,6 +91,21 @@ function populateDays() {
     date.setDate(date.getDate() + i);
     weekDayDate.innerText = date.getDate();
     weekDayDate.setAttribute("data-date", date.toISOString());
+  }
+}
+
+function refreshDayAvailability(schedule) {
+  const weekDayDates = document.getElementsByClassName("weekDay");
+  for (let i = 0; i < weekDayDates.length; i++) {
+    const weekDayDate = weekDayDates[i];
+    const date = new Date(weekDayDate.getAttribute("data-date"));
+
+    // day of week starting from monday
+    const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
+    const daySchedule = schedule[dayOfWeek - 1];
+    if (daySchedule[0] === 0 && daySchedule[1] === 0) { // from 00:00 to 00:00 - unavailable
+      weekDayDate.classList.add("unavailable");
+    }
   }
 }
 
@@ -107,6 +122,8 @@ async function main() {
 
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
   scheduleOwnerNameEl.innerText = ownerInfo.name;
+
+  refreshDayAvailability(ownerInfo.schedule.windows);
 
   const weekDayElements = document.getElementsByClassName("weekDay");
   for (const weekDayElement of weekDayElements) {

@@ -1,5 +1,11 @@
 .scheduleStep {
     font-size: large;
+    transition: all 0.2s ease;
+}
+
+.scheduleStep.hidden {
+    opacity: 0;
+    margin-top: -10px;
 }
 
 .scheduleWeekDays {

@@ -52,6 +52,17 @@ async function getDayAvailability(date) {
   return responseData.data.day_availability;
 }
 
+function showStep(step) {
+  const steps = document.getElementsByClassName("scheduleStep");
+
+  for (const stepEl of steps) {
+    if (stepEl.getAttribute("data-step") === `${step}`) {
+      stepEl.classList.remove("hidden");
+      break;
+    }
+  }
+}
+
 async function onDayClicked(event) {
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
@@ -135,4 +146,6 @@ async function main() {
       onDayClicked(event).then(() => {});
     });
   }
+
+  showStep(1);
 }

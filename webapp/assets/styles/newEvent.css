@@ -86,7 +86,7 @@
     width: 100%;
 }
 
-#scheduleTimeSelectorContainer > select {
+#scheduleTimeSelectorContainer>select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -106,27 +106,67 @@
     font-weight: bold;
 }
 
-#scheduleTimeSelectorContainer > select::-ms-expand {
+#scheduleTimeSelectorContainer>select::-ms-expand {
     display: none;
 }
 
-#scheduleTimeSelectorContainer > select:hover {
+#scheduleTimeSelectorContainer>select:hover {
     border: 1px solid var(--tg-theme-button-color);
 }
 
 
-#scheduleTimeSelectorContainer > select>option {
+#scheduleTimeSelectorContainer>select>option {
     background-color: var(--tg-theme-button-color);
     color: var(--tg-theme-button-text-color);
 }
 
+#phoneIcon {
+    width: 30px;
+    height: 100%;
+    margin-right: 10px;
+}
 
-#scheduleTimeSelectorTitles {
+#scheduleConfirmationContainer {
+    width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 10px;
-    font-weight: bold;
+    align-items: top;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#scheduleSummaryInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#scheduleConfirmationDateTime {
+    opacity: 1;
+    transition: all 0.2s 0.25s ease;
+}
+
+#scheduleConfirmationDuration {
+    opacity: 1;
+    transition: all 0.2s 0.35s ease;
+}
+
+#scheduleConfirmationUser {
+    opacity: 1;
+    transition: all 0.2s 0.45s ease;
+}
+
+.scheduleStep[data-step="3"].hidden #scheduleConfirmationDateTime {
+    opacity: 0;
+    margin-top: 15px;
+}
+
+.scheduleStep[data-step="3"].hidden #scheduleConfirmationDuration {
+    opacity: 0;
+    margin-top: 15px;
+}
+
+.scheduleStep[data-step="3"].hidden #scheduleConfirmationUser {
+    opacity: 0;
+    margin-top: 15px;
 }

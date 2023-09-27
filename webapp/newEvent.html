@@ -10,6 +10,12 @@
     <title>New Appointment</title>
     <link defer async rel="stylesheet" href="assets/styles/shared.css" />
     <link defer async rel="stylesheet" href="assets/styles/newEvent.css" />
+
+    <link defer async href="assets/animations/phone.json" rel="prefetch" />
+    <link defer async href="assets/animations/clock.json" rel="prefetch" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
+
     <!-- original version -->
     <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
 
@@ -27,6 +33,17 @@
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initApp(debug);
       main().then(() => {});
+
+      setTimeout(() => {
+        const phoneIconAnimation = bodymovin.loadAnimation({
+        container: document.getElementById('phoneIcon'),
+        path: 'assets/animations/phone.json',
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        name: "Phone",
+      });
+      }, 0);
     </script>
 
     <main>
@@ -72,6 +89,29 @@
           <select id="scheduleMinuteSelector"></select>
         </div>
       </div>
+
+      <div class="scheduleStep hidden" data-step="3">
+        <p><span class="font-bold">3. </span>Is this correct?</p>
+        
+        <div id="scheduleConfirmationContainer">
+          <div id="phoneIcon"></div>
+          <div id="scheduleSummaryInfo">
+            <div id="scheduleConfirmationDateTime">
+              <span class="font-bold">When: </span>
+              Wed Sep 27 2023 20:08
+            </div>
+            
+            <div id="scheduleConfirmationDuration">
+              <span class="font-bold">Duration: </span>
+              30 minutes
+            </div>
+            
+            <div id="scheduleConfirmationUser">
+              <span class="font-bold">With: </span>
+              <span id="scheduleConfirmationUserName">...</span>
+            </div>
+          </div>
+        </div>
     </main>
   </body>
 

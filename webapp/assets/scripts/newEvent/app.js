@@ -177,13 +177,17 @@ async function onDayClicked(event) {
       "No available time slots, please select another day"
     );
     hideStep(2);
+    hideStep(3);
     return;
   }
 
   populateTimeSlots(availability, selectedDate);
   showStep(2);
   Telegram.WebApp.MainButton.show();
-  Telegram.WebApp.MainButton.setText("Schedule call");
+  Telegram.WebApp.MainButton.setText("Yes, schedule it!");
+  setTimeout(() => {
+    showStep(3);
+  }, 300);
 }
 
 function populateDays() {

@@ -112,8 +112,12 @@ function populateTimeSlots(availability, selectedDate) {
 
   for (const hour of hours) {
     const option = document.createElement("option");
+
+    const timezoneOffset = new Date().getTimezoneOffset();
+    const localHour = +hour - timezoneOffset / 60;
+
     option.value = hour;
-    option.innerText = `${hour}`.padStart(2, "0") + " h";
+    option.innerText = `${localHour}`.padStart(2, "0") + "h";
     scheduleHourSelector.appendChild(option);
   }
 
@@ -139,7 +143,7 @@ function populateTimeSlots(availability, selectedDate) {
   for (const minute of minutes) {
     const option = document.createElement("option");
     option.value = minute;
-    option.innerText = `${minute}`.padStart(2, "0") + " min";
+    option.innerText = `${minute}`.padStart(2, "0") + "min";
     scheduleMinuteSelector.appendChild(option);
   }
 

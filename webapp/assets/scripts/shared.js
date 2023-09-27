@@ -60,11 +60,11 @@ async function authUser() {
   const data = await response.json();
 
   if (data.success) {
-    localStorage.setItem("user", data.data.user);
+    localStorage.setItem("user", JSON.stringify(data.data.user));
     return data.data;
   }
 }
 
 function getUser() {
-  return localStorage.getItem("user");
+  return JSON.parse(localStorage.getItem("user"));
 }

@@ -1,9 +1,24 @@
+const scheduleData = {
+  owner_user_id: null,
+  invited_user_id: null,
+  appointment_time: new Date(),
+  duration: "PT30M", // hardcoded on server anyway
+};
+
+const scheduleSummary = {
+  dateTime: new Date(),
+  duration: "30 min",
+  name: "",
+};
+
 async function getOwnerAppointmentInfo() {
   const initData = getInitData();
-  const owner_user_id = initData.start_param.split("_")[1];
+  const ownerUserId = initData.start_param.split("_")[1];
+
+  scheduleData.invited_user_id = initData.user_id;
 
   const response = await fetch(
-    `http://localhost:5000/user/info/${owner_user_id}`,
+    `http://localhost:5000/user/info/${ownerUserId}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",
@@ -75,9 +90,7 @@ function hideStep(step) {
 }
 
 function populateTimeSlots(availability, selectedDate) {
-  // example availability
-  // {5: [0, 30], 6: [0, 30], 7: [0, 30], 8: [0, 30], 9: [0, 30], 10: [0, 30], 11: [0, 30], 12: [0, 30], 13: [0, 30], 14: [0, 30]}
-  const scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  let scheduleHourSelector = document.getElementById("scheduleHourSelector");
   scheduleHourSelector.innerHTML = "";
 
   const hours = Object.keys(availability);
@@ -104,7 +117,7 @@ function populateTimeSlots(availability, selectedDate) {
     scheduleHourSelector.appendChild(option);
   }
 
-  const scheduleMinuteSelector = document.getElementById(
+  let scheduleMinuteSelector = document.getElementById(
     "scheduleMinuteSelector"
   );
   scheduleMinuteSelector.innerHTML = "";
@@ -130,8 +143,30 @@ function populateTimeSlots(availability, selectedDate) {
     scheduleMinuteSelector.appendChild(option);
   }
 
+  // clear all event listeners
+  scheduleHourSelector.parentNode.replaceChild(
+    scheduleHourSelector.cloneNode(true),
+    scheduleHourSelector
+  );
+  scheduleMinuteSelector.parentNode.replaceChild(
+    scheduleMinuteSelector.cloneNode(true),
+    scheduleMinuteSelector
+  );
+
+  // get new element refs
+  scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  scheduleMinuteSelector = document.getElementById("scheduleMinuteSelector");
+
   scheduleHourSelector.addEventListener("change", (event) => {
     onHourChanged(event, availability);
+  });
+
+  scheduleHourSelector.addEventListener("change", (event) => {
+    onScheduleDataChanged({ hour: event.target.value });
+  });
+
+  scheduleMinuteSelector.addEventListener("change", (event) => {
+    onScheduleDataChanged({ minute: event.target.value });
   });
 }
 
@@ -149,6 +184,58 @@ function onHourChanged(event, availability) {
     option.innerText = `${minute}`.padStart(2, "0") + " min";
     scheduleMinuteSelector.appendChild(option);
   }
+}
+
+function refreshSummary() {
+  const scheduleConfirmationDateTime = document
+    .getElementById("scheduleConfirmationDateTime")
+    .getElementsByClassName("scheduleData")[0];
+  const scheduleConfirmationDuration = document
+    .getElementById("scheduleConfirmationDuration")
+    .getElementsByClassName("scheduleData")[0];
+  const scheduleConfirmationUser = document
+    .getElementById("scheduleConfirmationUser")
+    .getElementsByClassName("scheduleData")[0];
+
+  // set date time in format "dd MMM yyyy, HH:mm"
+  scheduleConfirmationDateTime.innerText = new Date(
+    scheduleSummary.date
+  ).toLocaleString("en-US", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+
+  scheduleConfirmationDuration.innerText = scheduleSummary.duration;
+  scheduleConfirmationUser.innerText = scheduleSummary.name;
+}
+
+function onScheduleDataChanged(newData) {
+  if (newData["hour"]) {
+    scheduleData.appointment_time.setUTCHours(newData["hour"]);
+  }
+
+  if (newData["minute"]) {
+    scheduleData.appointment_time.setUTCMinutes(newData["minute"]);
+  }
+
+  if (newData["date"]) {
+    const newDate = new Date(newData["date"]);
+    newDate.setUTCHours(scheduleData.appointment_time.getUTCHours());
+    newDate.setUTCMinutes(scheduleData.appointment_time.getUTCMinutes());
+    newDate.setUTCSeconds(0);
+    newDate.setUTCMilliseconds(0);
+
+    scheduleData.appointment_time = newDate;
+  }
+
+  if (newData["duration"]) {
+    scheduleData.duration = newData["duration"];
+  }
+
+  refreshSummary();
 }
 
 async function onDayClicked(event) {
@@ -180,6 +267,8 @@ async function onDayClicked(event) {
     hideStep(3);
     return;
   }
+
+  onScheduleDataChanged({ date: selectedDate });
 
   populateTimeSlots(availability, selectedDate);
   showStep(2);
@@ -244,6 +333,10 @@ async function main() {
   if (!ownerInfo) {
     return;
   }
+
+  onScheduleDataChanged({ name: ownerInfo.name });
+  scheduleSummary.name = ownerInfo.name;
+  scheduleData.owner_user_id = ownerInfo.id;
 
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
   scheduleOwnerNameEl.innerText = ownerInfo.name;

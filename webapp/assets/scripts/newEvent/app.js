@@ -277,7 +277,7 @@ async function onDayClicked(event) {
   onScheduleDataChanged({
     date: selectedDate,
     hour: +hours[0],
-    minute: +minutes[0],
+    minute: availability[hours[0]][0],
   });
 
   populateTimeSlots(availability, selectedDate);

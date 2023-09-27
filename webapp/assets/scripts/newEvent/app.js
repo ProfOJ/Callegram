@@ -15,7 +15,7 @@ async function getOwnerAppointmentInfo() {
   const initData = getInitData();
   const ownerUserId = initData.start_param.split("_")[1];
 
-  scheduleData.invited_user_id = initData.user_id;
+  scheduleData.invited_user_id = getUser().id;
 
   const response = await fetch(
     `http://localhost:5000/user/info/${ownerUserId}`,
@@ -162,11 +162,11 @@ function populateTimeSlots(availability, selectedDate) {
   });
 
   scheduleHourSelector.addEventListener("change", (event) => {
-    onScheduleDataChanged({ hour: event.target.value });
+    onScheduleDataChanged({ hour: +event.target.value });
   });
 
   scheduleMinuteSelector.addEventListener("change", (event) => {
-    onScheduleDataChanged({ minute: event.target.value });
+    onScheduleDataChanged({ minute: +event.target.value });
   });
 }
 
@@ -199,13 +199,14 @@ function refreshSummary() {
 
   // set date time in format "dd MMM yyyy, HH:mm"
   scheduleConfirmationDateTime.innerText = new Date(
-    scheduleSummary.date
+    scheduleSummary.dateTime
   ).toLocaleString("en-US", {
     day: "numeric",
     month: "short",
     year: "numeric",
     hour: "numeric",
     minute: "numeric",
+    hour12: false,
   });
 
   scheduleConfirmationDuration.innerText = scheduleSummary.duration;
@@ -213,26 +214,27 @@ function refreshSummary() {
 }
 
 function onScheduleDataChanged(newData) {
-  if (newData["hour"]) {
+  if (newData.hasOwnProperty("hour")) {
     scheduleData.appointment_time.setUTCHours(newData["hour"]);
+    scheduleSummary.dateTime.setUTCHours(newData["hour"]);
   }
 
-  if (newData["minute"]) {
+  if (newData.hasOwnProperty("minute")) {
     scheduleData.appointment_time.setUTCMinutes(newData["minute"]);
+    scheduleSummary.dateTime.setUTCMinutes(newData["minute"]);
   }
 
-  if (newData["date"]) {
-    const newDate = new Date(newData["date"]);
-    newDate.setUTCHours(scheduleData.appointment_time.getUTCHours());
-    newDate.setUTCMinutes(scheduleData.appointment_time.getUTCMinutes());
-    newDate.setUTCSeconds(0);
-    newDate.setUTCMilliseconds(0);
-
-    scheduleData.appointment_time = newDate;
+  if (newData.hasOwnProperty("date")) {
+    scheduleData.appointment_time.setUTCDate(newData["date"].getUTCDate());
+    scheduleSummary.dateTime.setUTCDate(newData["date"].getUTCDate());
   }
 
-  if (newData["duration"]) {
+  if (newData.hasOwnProperty("duration")) {
     scheduleData.duration = newData["duration"];
+  }
+
+  if (newData.hasOwnProperty("name")) {
+    scheduleSummary.name = newData["name"];
   }
 
   refreshSummary();
@@ -268,7 +270,11 @@ async function onDayClicked(event) {
     return;
   }
 
-  onScheduleDataChanged({ date: selectedDate });
+  onScheduleDataChanged({
+    date: selectedDate,
+    hour: +hours[0],
+    minute: +minutes[0],
+  });
 
   populateTimeSlots(availability, selectedDate);
   showStep(2);
@@ -335,7 +341,6 @@ async function main() {
   }
 
   onScheduleDataChanged({ name: ownerInfo.name });
-  scheduleSummary.name = ownerInfo.name;
   scheduleData.owner_user_id = ownerInfo.id;
 
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");

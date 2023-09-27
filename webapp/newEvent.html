@@ -32,7 +32,7 @@
     <main>
       <div class="scheduleStep hidden" data-step="1">
         <p>
-          <span class="font-bold">1. </span>Pick a date for a call with
+          <span class="font-bold">1. </span>Pick a date for the call with
           <span class="font-bold" id="scheduleOwnerName">...</span>
         </p>
 
@@ -61,6 +61,20 @@
           <div class="weekDay">.</div>
           <div class="weekDay">.</div>
           <div class="weekDay">.</div>
+        </div>
+      </div>
+
+      <div class="scheduleStep hidden" data-step="2">
+        <p><span class="font-bold">2. </span>Pick a time</p>
+
+        <div id="scheduleTimeSelectorContainer">
+          <div id="scheduleHourSelectorContainer">
+            <select id="scheduleHourSelector"></select>
+          </div>
+
+          <div id="scheduleMinuteSelectorContainer">
+            <select id="scheduleMinuteSelector"></select>
+          </div>
         </div>
       </div>
     </main>

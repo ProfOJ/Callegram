@@ -63,6 +63,51 @@ function showStep(step) {
   }
 }
 
+function populateTimeSlots(availability) {
+  // example availability
+  // {5: [0, 30], 6: [0, 30], 7: [0, 30], 8: [0, 30], 9: [0, 30], 10: [0, 30], 11: [0, 30], 12: [0, 30], 13: [0, 30], 14: [0, 30]}
+  const scheduleHourSelector = document.getElementById("scheduleHourSelector");
+
+  const hours = Object.keys(availability);
+  for (const hour of hours) {
+    const option = document.createElement("option");
+    option.value = hour;
+    option.innerText = hour;
+    scheduleHourSelector.appendChild(option);
+  }
+
+  const scheduleMinuteSelector = document.getElementById(
+    "scheduleMinuteSelector"
+  );
+  const minutes = availability[hours[0]];
+  for (const minute of minutes) {
+    const option = document.createElement("option");
+    option.value = minute;
+    option.innerText = minute;
+    scheduleMinuteSelector.appendChild(option);
+  }
+
+  scheduleHourSelector.addEventListener("change", (event) => {
+    onHourChanged(event, availability);
+  });
+}
+
+function onHourChanged(event, availability) {
+  const hour = event.target.value;
+  const scheduleMinuteSelector = document.getElementById(
+    "scheduleMinuteSelector"
+  );
+  scheduleMinuteSelector.innerHTML = "";
+
+  const minutes = availability[hour];
+  for (const minute of minutes) {
+    const option = document.createElement("option");
+    option.value = minute;
+    option.innerText = minute;
+    scheduleMinuteSelector.appendChild(option);
+  }
+}
+
 async function onDayClicked(event) {
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
@@ -74,6 +119,8 @@ async function onDayClicked(event) {
   const date = new Date(element.getAttribute("data-date"));
   const availability = await getDayAvailability(date);
   console.log(availability);
+  populateTimeSlots(availability);
+  showStep(2);
 }
 
 function populateDays() {

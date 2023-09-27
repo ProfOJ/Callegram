@@ -121,7 +121,7 @@
 }
 
 #phoneIcon {
-    width: 30px;
+    width: 40px;
     height: 100%;
     margin-right: 10px;
 }
@@ -158,15 +158,15 @@
 
 .scheduleStep[data-step="3"].hidden #scheduleConfirmationDateTime {
     opacity: 0;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .scheduleStep[data-step="3"].hidden #scheduleConfirmationDuration {
     opacity: 0;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .scheduleStep[data-step="3"].hidden #scheduleConfirmationUser {
     opacity: 0;
-    margin-top: 15px;
+    margin-top: 10px;
 }

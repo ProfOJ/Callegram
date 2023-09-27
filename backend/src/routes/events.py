@@ -22,6 +22,9 @@ def is_event_overlapping(
         if event.appointment_time.weekday() != new_event.appointment_time.weekday():
             continue
 
+        if event.appointment_time.date() != new_event.appointment_time.date():
+            continue
+
         if event.id == old_event_id:
             continue
 

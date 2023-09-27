@@ -127,6 +127,10 @@ async function main() {
 
   const weekDayElements = document.getElementsByClassName("weekDay");
   for (const weekDayElement of weekDayElements) {
+    if (weekDayElement.classList.contains("unavailable")) {
+      continue;
+    }
+
     weekDayElement.addEventListener("click", onDayClicked);
   }
 }

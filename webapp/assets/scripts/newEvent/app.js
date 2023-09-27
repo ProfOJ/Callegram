@@ -246,6 +246,8 @@ function onScheduleDataChanged(newData) {
   if (newData.hasOwnProperty("date")) {
     scheduleData.appointment_time.setUTCDate(newData["date"].getUTCDate());
     scheduleSummary.dateTime.setUTCDate(newData["date"].getUTCDate());
+    scheduleData.appointment_time.setUTCSeconds(0, 0);
+    scheduleSummary.dateTime.setUTCSeconds(0, 0);
   }
 
   if (newData.hasOwnProperty("duration")) {

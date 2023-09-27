@@ -63,6 +63,17 @@ function showStep(step) {
   }
 }
 
+function hideStep(step) {
+  const steps = document.getElementsByClassName("scheduleStep");
+
+  for (const stepEl of steps) {
+    if (stepEl.getAttribute("data-step") === `${step}`) {
+      stepEl.classList.add("hidden");
+      break;
+    }
+  }
+}
+
 function populateTimeSlots(availability, selectedDate) {
   // example availability
   // {5: [0, 30], 6: [0, 30], 7: [0, 30], 8: [0, 30], 9: [0, 30], 10: [0, 30], 11: [0, 30], 12: [0, 30], 13: [0, 30], 14: [0, 30]}
@@ -148,9 +159,28 @@ async function onDayClicked(event) {
 
   const element = event.target;
   element.classList.add("selected");
-  const date = new Date(element.getAttribute("data-date"));
-  const availability = await getDayAvailability(date);
-  populateTimeSlots(availability, date);
+  const selectedDate = new Date(element.getAttribute("data-date"));
+  const availability = await getDayAvailability(selectedDate);
+
+  // check if last available slot is before current time (in UTC) and selected date is today
+  const today = new Date();
+  const hours = Object.keys(availability);
+  const lastHour = hours[hours.length - 1];
+  const minutes = availability[lastHour];
+  const lastMinute = minutes[minutes.length - 1];
+  const lastAvailableDate = new Date(selectedDate);
+
+  lastAvailableDate.setUTCHours(lastHour, lastMinute, 0, 0);
+
+  if (today.getTime() > lastAvailableDate.getTime()) {
+    Telegram.WebApp.showAlert(
+      "No available time slots, please select another day"
+    );
+    hideStep(2);
+    return;
+  }
+
+  populateTimeSlots(availability, selectedDate);
   showStep(2);
   Telegram.WebApp.MainButton.show();
   Telegram.WebApp.MainButton.setText("Schedule call");

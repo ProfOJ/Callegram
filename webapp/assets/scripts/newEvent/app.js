@@ -52,7 +52,7 @@ async function getDayAvailability(date) {
   return responseData.data.day_availability;
 }
 
-function onDayClicked(event) {
+async function onDayClicked(event) {
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
     day.classList.remove("selected");
@@ -61,9 +61,8 @@ function onDayClicked(event) {
   const element = event.target;
   element.classList.add("selected");
   const date = new Date(element.getAttribute("data-date"));
-  getDayAvailability(date).then((availability) => {
-    console.log(availability);
-  });
+  const availability = await getDayAvailability(date);
+  console.log(availability);
 }
 
 function populateDays() {
@@ -103,7 +102,8 @@ function refreshDayAvailability(schedule) {
     // day of week starting from monday
     const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay();
     const daySchedule = schedule[dayOfWeek - 1];
-    if (daySchedule[0] === 0 && daySchedule[1] === 0) { // from 00:00 to 00:00 - unavailable
+    if (daySchedule[0] === 0 && daySchedule[1] === 0) {
+      // from 00:00 to 00:00 - unavailable
       weekDayDate.classList.add("unavailable");
     }
   }
@@ -131,6 +131,8 @@ async function main() {
       continue;
     }
 
-    weekDayElement.addEventListener("click", onDayClicked);
+    weekDayElement.addEventListener("click", (event) => {
+      onDayClicked(event).then(() => {});
+    });
   }
 }

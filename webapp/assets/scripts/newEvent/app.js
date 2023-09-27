@@ -67,28 +67,6 @@ async function getDayAvailability(date) {
   return responseData.data.day_availability;
 }
 
-function showStep(step) {
-  const steps = document.getElementsByClassName("scheduleStep");
-
-  for (const stepEl of steps) {
-    if (stepEl.getAttribute("data-step") === `${step}`) {
-      stepEl.classList.remove("hidden");
-      break;
-    }
-  }
-}
-
-function hideStep(step) {
-  const steps = document.getElementsByClassName("scheduleStep");
-
-  for (const stepEl of steps) {
-    if (stepEl.getAttribute("data-step") === `${step}`) {
-      stepEl.classList.add("hidden");
-      break;
-    }
-  }
-}
-
 function populateTimeSlots(availability, selectedDate) {
   let scheduleHourSelector = document.getElementById("scheduleHourSelector");
   scheduleHourSelector.innerHTML = "";
@@ -270,7 +248,11 @@ async function onDayClicked(event) {
   const element = event.target;
   element.classList.add("selected");
   const selectedDate = new Date(element.getAttribute("data-date"));
+  blockStep(2);
+  blockStep(3);
   const availability = await getDayAvailability(selectedDate);
+  unblockStep(2);
+  unblockStep(3);
 
   // check if last available slot is before current time (in UTC) and selected date is today
   const today = new Date();
@@ -362,6 +344,7 @@ async function main() {
     return;
   }
 
+  Telegram.WebApp.enableClosingConfirmation();
   onScheduleDataChanged({ name: ownerInfo.name });
   scheduleData.owner_user_id = ownerInfo.id;
 

@@ -6,6 +6,12 @@
 .scheduleStep.hidden {
     opacity: 0;
     margin-top: -10px;
+    pointer-events: none;
+}
+
+.scheduleStep.blocked:not(.hidden) {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .scheduleWeekDays {

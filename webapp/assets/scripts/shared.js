@@ -32,6 +32,9 @@ function getInitData() {
   for (const [key, value] of initData) {
     initDataObject[key] = value;
   }
+  if (initDataObject.hasOwnProperty("user")) {
+    initDataObject["user"] = JSON.parse(initDataObject["user"]);
+  }
   return initDataObject;
 }
 

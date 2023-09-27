@@ -286,8 +286,9 @@ async function onDayClicked(event) {
     Telegram.WebApp.showAlert(
       "No available time slots, please select another day"
     );
-    hideStep(2);
     hideStep(3);
+    hideStep(2);
+    Telegram.WebApp.MainButton.hide();
     return;
   }
 

@@ -222,8 +222,17 @@ function onScheduleDataChanged(newData) {
   }
 
   if (newData.hasOwnProperty("date")) {
+    scheduleData.appointment_time.setUTCFullYear(
+      newData["date"].getUTCFullYear()
+    );
+    scheduleSummary.dateTime.setUTCFullYear(newData["date"].getUTCFullYear());
+
+    scheduleData.appointment_time.setUTCMonth(newData["date"].getUTCMonth());
+    scheduleSummary.dateTime.setUTCMonth(newData["date"].getUTCMonth());
+
     scheduleData.appointment_time.setUTCDate(newData["date"].getUTCDate());
     scheduleSummary.dateTime.setUTCDate(newData["date"].getUTCDate());
+
     scheduleData.appointment_time.setUTCSeconds(0, 0);
     scheduleSummary.dateTime.setUTCSeconds(0, 0);
   }
@@ -237,6 +246,50 @@ function onScheduleDataChanged(newData) {
   }
 
   refreshSummary();
+}
+
+async function onScheduleConfirmed() {
+  Telegram.WebApp.MainButton.setText("Scheduling...");
+  Telegram.WebApp.MainButton.showProgress();
+
+  const response = await fetch("http://localhost:5000/event/create", {
+    headers: getCommonHeaders(),
+    mode: "cors",
+    method: "POST",
+    body: JSON.stringify(scheduleData),
+  });
+
+  if (response.status === 401) {
+    Telegram.WebApp.showAlert("Unauthenticated");
+    Telegram.WebApp.MainButton.setText("Yes, schedule it!");
+    Telegram.WebApp.MainButton.hideProgress();
+    return;
+  }
+
+  const responseData = await response.json();
+
+  if (!responseData.success) {
+    Telegram.WebApp.showAlert(responseData.message);
+    Telegram.WebApp.MainButton.setText("Yes, schedule it!");
+    Telegram.WebApp.MainButton.hideProgress();
+    return;
+  }
+
+  Telegram.WebApp.MainButton.hide();
+  Telegram.WebApp.MainButton.hideProgress();
+  Telegram.WebApp.showPopup({
+    title: "Call scheduled!",
+    message: "You will be notified in 30 and 15 minutes before the call",
+    buttons: [
+      {
+        id: "ok",
+        type: "ok",
+      },
+    ],
+  });
+  Telegram.WebApp.onEvent("popupClosed", () => {
+    Telegram.WebApp.close();
+  });
 }
 
 async function onDayClicked(event) {
@@ -284,6 +337,11 @@ async function onDayClicked(event) {
   showStep(2);
   Telegram.WebApp.MainButton.show();
   Telegram.WebApp.MainButton.setText("Yes, schedule it!");
+  Telegram.WebApp.MainButton.onClick(() => {
+    if (Telegram.WebApp.MainButton.isActive) {
+      onScheduleConfirmed().then(() => {});
+    }
+  });
   setTimeout(() => {
     showStep(3);
   }, 300);

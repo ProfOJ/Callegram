@@ -63,27 +63,59 @@ function showStep(step) {
   }
 }
 
-function populateTimeSlots(availability) {
+function populateTimeSlots(availability, selectedDate) {
   // example availability
   // {5: [0, 30], 6: [0, 30], 7: [0, 30], 8: [0, 30], 9: [0, 30], 10: [0, 30], 11: [0, 30], 12: [0, 30], 13: [0, 30], 14: [0, 30]}
   const scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  scheduleHourSelector.innerHTML = "";
 
   const hours = Object.keys(availability);
+
+  //remove hours before current hour
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  selectedDate.setHours(0, 0, 0, 0);
+  if (today.getTime() === selectedDate.getTime()) {
+    const currentHour = new Date().getUTCHours();
+    for (let i = 0; i < hours.length; i++) {
+      const hour = hours[i];
+      if (hour < currentHour) {
+        hours.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
   for (const hour of hours) {
     const option = document.createElement("option");
     option.value = hour;
-    option.innerText = hour;
+    option.innerText = `${hour}`.padStart(2, "0") + " h";
     scheduleHourSelector.appendChild(option);
   }
 
   const scheduleMinuteSelector = document.getElementById(
     "scheduleMinuteSelector"
   );
+  scheduleMinuteSelector.innerHTML = "";
+
   const minutes = availability[hours[0]];
+
+  //remove minutes before current minute
+  if (today.getTime() === selectedDate.getTime()) {
+    const currentMinute = new Date().getUTCMinutes();
+    for (let i = 0; i < minutes.length; i++) {
+      const minute = minutes[i];
+      if (minute < currentMinute) {
+        minutes.splice(i, 1);
+        i--;
+      }
+    }
+  }
+
   for (const minute of minutes) {
     const option = document.createElement("option");
     option.value = minute;
-    option.innerText = minute;
+    option.innerText = `${minute}`.padStart(2, "0") + " min";
     scheduleMinuteSelector.appendChild(option);
   }
 
@@ -103,7 +135,7 @@ function onHourChanged(event, availability) {
   for (const minute of minutes) {
     const option = document.createElement("option");
     option.value = minute;
-    option.innerText = minute;
+    option.innerText = `${minute}`.padStart(2, "0") + " min";
     scheduleMinuteSelector.appendChild(option);
   }
 }
@@ -118,9 +150,10 @@ async function onDayClicked(event) {
   element.classList.add("selected");
   const date = new Date(element.getAttribute("data-date"));
   const availability = await getDayAvailability(date);
-  console.log(availability);
-  populateTimeSlots(availability);
+  populateTimeSlots(availability, date);
   showStep(2);
+  Telegram.WebApp.MainButton.show();
+  Telegram.WebApp.MainButton.setText("Schedule call");
 }
 
 function populateDays() {

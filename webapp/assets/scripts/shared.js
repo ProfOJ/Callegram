@@ -1,13 +1,3 @@
-function stopLoading() {
-  document.getElementById("loading").style.display = "none";
-  document.getElementsByTagName("main")[0].style.display = "block";
-}
-
-function startLoading() {
-  document.getElementById("loading").style.display = "block";
-  document.getElementsByTagName("main")[0].style.display = "none";
-}
-
 function themeChangedCallback() {
   document.documentElement.className = Telegram.WebApp.colorScheme;
   document.body.setAttribute(
@@ -39,10 +29,10 @@ function getInitData() {
 }
 
 function getCommonHeaders() {
-    return {
-        Authorization: btoa(Telegram.WebApp.initData),
-        "Content-Type": "application/json",
-    };
+  return {
+    Authorization: btoa(Telegram.WebApp.initData),
+    "Content-Type": "application/json",
+  };
 }
 
 async function authUser() {

@@ -29,18 +29,10 @@
     <script async>
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initApp(debug);
-
-      authUser().then((authData) => {
-        if (authData) {
-          const welcomeMessage = document.getElementById("welcomeMessage");
-          welcomeMessage.innerHTML = `Welcome ${authData.user.name}!`;
-          stopLoading();
-        }
-      });
+      main().then(() => {});
     </script>
-    <div id="loading">Loading...</div>
     <main>
-      <div id="welcomeMessage"></div>
+      
     </main>
     <!-- <div id="viewport"></div>
     <div id="viewport-params-size"></div>

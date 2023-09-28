@@ -43,6 +43,12 @@ async function main() {
   today.setUTCHours(0, 0, 0, 0);
   const busyDays = await getBusyDays(today, dateEnd);
 
+  busyDays.sort((a, b) => {
+    const dateA = new Date(a);
+    const dateB = new Date(b);
+    return dateA.getTime() - dateB.getTime();
+  });
+
   disableFreeDays(busyDays);
 
   const weekDayElements = document.getElementsByClassName("weekDay");

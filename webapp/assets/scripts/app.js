@@ -25,6 +25,7 @@ function disableFreeDays(busyDays) {
     const dateString = date.toISOString().split("T")[0];
     if (!busyDays.includes(dateString)) {
       weekDayElement.classList.add("unavailable");
+      weekDayElement.setAttribute("title", "No calls on this day");
     }
   }
 }

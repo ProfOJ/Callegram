@@ -1,10 +1,11 @@
 import datetime
 
+from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.operators import or_
 
 from database.models import CalendarEvent as CalendarEventEntity
-from models.view import CalendarEvent
+from models.view import CalendarEvent, User
 from repositories.base import SQLAlchemyRepository
 
 
@@ -30,7 +31,6 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         events = await super().find_all_by_filter(
             [or_(self.model.owner_user_id == user_id, self.model.invited_user_id == user_id)]
         )
-        print(events)
         return [
             CalendarEvent(
                 id=str(event.id),
@@ -110,7 +110,8 @@ class CalendarEventsRepository(SQLAlchemyRepository):
             (self.model.appointment_time >= date),
             (self.model.appointment_time < date + datetime.timedelta(days=1))
         ], options=[
-            joinedload(self.model.owner_user)
+            joinedload(self.model.owner_user),
+            joinedload(self.model.invited_user)
         ])
 
         return [
@@ -119,6 +120,20 @@ class CalendarEventsRepository(SQLAlchemyRepository):
                 owner_user_id=event.owner_user_id,
                 invited_user_id=event.invited_user_id,
                 appointment_time=event.appointment_time,
-                duration=event.duration
+                duration=event.duration,
+                owner_user=User(
+                    id=event.owner_user.id,
+                    name=event.owner_user.name,
+                    timezone=event.owner_user.timezone,
+                    notification_time=[],
+                    schedule=None
+                ) if event.owner_user else None,
+                invited_user=User(
+                    id=event.invited_user.id,
+                    name=event.invited_user.name,
+                    timezone=event.invited_user.timezone,
+                    notification_time=[],
+                    schedule=None
+                ) if event.invited_user else None
             ) for event in events
         ]

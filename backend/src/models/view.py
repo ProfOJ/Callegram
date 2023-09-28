@@ -23,3 +23,6 @@ class CalendarEvent(BaseModel):
     invited_user_id: int
     appointment_time: datetime
     duration: timedelta
+
+    owner_user: Optional[User] = None
+    invited_user: Optional[User] = None

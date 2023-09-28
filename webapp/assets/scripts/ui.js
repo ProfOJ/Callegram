@@ -26,7 +26,11 @@ function createEventElement(event, stub = false) {
     return eventContainer;
   }
 
-  eventPerson.innerText = "Andrew";
+  const userId = getUser().id;
+  const isOwner = event.owner_user_id === userId;
+  eventPerson.innerText = isOwner
+    ? event.invited_user.name
+    : event.owner_user.name;
 
   const eventTime = document.createElement("div");
   eventTime.classList.add("dayEventTime");

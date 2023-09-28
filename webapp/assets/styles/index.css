@@ -50,6 +50,7 @@
 
 .dayEventStub {
     opacity: 0.2;
+    cursor: not-allowed;
 }
 
 .dayEventPerson {

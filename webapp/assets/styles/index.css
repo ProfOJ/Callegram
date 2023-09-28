@@ -1,3 +1,61 @@
 .sectionTitle {
     font-size: large;
+    font-weight: bold;
+}
+
+#eventsForDay {
+    width: 100%;
+    padding-top: 15px;
+}
+
+#eventsForDayList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.dayEventRow {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 10px;
+}
+
+.dayEventRow>div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.dayEventRowWindow {
+    font-weight: bold;
+}
+
+.dayEvent {
+    width: 100%;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border-radius: 5px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    transition: all 0.2s ease;
+}
+
+.dayEventStub {
+    opacity: 0.2;
+}
+
+.dayEventPerson {
+    font-weight: 600;
+}
+
+.dayEventTime {
+    font-weight: 400;
 }

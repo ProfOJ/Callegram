@@ -6,6 +6,8 @@ body {
     margin: 24px 24px;
     padding: 0;
     color-scheme: var(--tg-color-scheme);
+    height: calc(100vh - 48px);
+    width: calc(100vw - 48px);
 }
 
 a {

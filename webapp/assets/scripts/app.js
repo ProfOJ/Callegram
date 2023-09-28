@@ -9,25 +9,23 @@ async function onDayClicked(event) {
   const date = new Date(weekDayElement.getAttribute("data-date"));
   date.setUTCHours(0, 0, 0, 0);
 
+  blockSection(2);
   const events = await getEventsForDate(date);
   if (!events) {
     return;
   }
+  hideSection(2);
+  setTimeout(() => {
+    unblockSection(2);
+    populateEvents(events);
+    setTimeout(() => {
+      showSection(2);
+    }, 300);
+  }, 150);
 }
 
-function disableFreeDays(busyDays) {
-  // busyDays example: ["2023-09-28", "2023-09-29", "2023-10-02"]
-  const weekDayElements = document.getElementsByClassName("weekDay");
-
-  for (const weekDayElement of weekDayElements) {
-    const date = new Date(weekDayElement.getAttribute("data-date"));
-
-    const dateString = date.toISOString().split("T")[0];
-    if (!busyDays.includes(dateString)) {
-      weekDayElement.classList.add("unavailable");
-      weekDayElement.setAttribute("title", "No calls on this day");
-    }
-  }
+async function onEventClicked(event) {
+  console.log(event.id);
 }
 
 async function main() {
@@ -63,6 +61,7 @@ async function main() {
       onDayClicked(event).then(() => {});
     });
   }
+  showSection(1);
 
   const firstBusyDate = new Date(busyDays[0]);
   const firstBusyDateUTC = new Date(
@@ -73,6 +72,6 @@ async function main() {
     )
   );
   const events = await getEventsForDate(firstBusyDateUTC);
-
-  showSection(1);
+  populateEvents(events);
+  showSection(2);
 }

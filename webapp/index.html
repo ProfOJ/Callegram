@@ -8,7 +8,9 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Callegram</title>
-    <link defer async rel="stylesheet" href="assets/styles/shared.css" />
+    <link rel="stylesheet" href="assets/styles/shared.css" />
+    <link rel="stylesheet" href="assets/styles/index.css" />
+
     <!-- original version -->
     <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
 
@@ -18,21 +20,55 @@
     <!-- uncomment for debugging -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
 
-    <script src="assets/scripts/shared.js"></script>
+    <script src="assets/scripts/shared/telegram.js"></script>
+    <script src="assets/scripts/shared/common.js"></script>
+    <script src="assets/scripts/shared/ui.js"></script>
+
     <script src="assets/scripts/app.js"></script>
 
     <!-- uncomment for debugging -->
-    <!-- <script src="assets/scripts/debug.js"></script> -->
+    <!-- <script src="assets/scripts/shared/debug.js"></script> -->
   </head>
 
   <body>
     <script async>
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
-      initApp(debug);
+      initTelegramApp(debug);
       main().then(() => {});
     </script>
     <main>
-      
+      <div id="dayPicker" class="homeSection" data-section="1">
+        <p class="sectionTitle">
+          Your calls for the next 14 days
+        </p>
+
+        <div class="scheduleWeekNames">
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+          <div class="weekDayName">.</div>
+        </div>
+
+        <div class="scheduleWeekDays">
+          <div class="weekDay today">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+          <div class="weekDay">.</div>
+        </div>
+      </div>
     </main>
     <!-- <div id="viewport"></div>
     <div id="viewport-params-size"></div>

@@ -11,62 +11,6 @@ const scheduleSummary = {
   name: "",
 };
 
-async function getOwnerAppointmentInfo() {
-  const initData = getInitData();
-  const ownerUserId = initData.start_param.split("_")[1];
-
-  scheduleData.invited_user_id = getUser().id;
-
-  const response = await fetch(
-    `http://localhost:5000/user/info/${ownerUserId}`,
-    {
-      headers: getCommonHeaders(),
-      mode: "cors",
-    }
-  );
-  if (response.status === 401) {
-    Telegram.WebApp.showAlert("Unauthenticated");
-    return;
-  }
-
-  const responseData = await response.json();
-  if (!responseData.success) {
-    Telegram.WebApp.showAlert(data.message);
-    return;
-  }
-
-  return responseData.data.user;
-}
-
-async function getDayAvailability(date) {
-  const initData = getInitData();
-  const owner_user_id = initData.start_param.split("_")[1];
-
-  date = new Date(
-    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
-  );
-
-  const response = await fetch(
-    `http://localhost:5000/schedule/day_availability/${owner_user_id}?date=${date.toISOString()}`,
-    {
-      headers: getCommonHeaders(),
-      mode: "cors",
-    }
-  );
-  if (response.status === 401) {
-    Telegram.WebApp.showAlert("Unauthenticated");
-    return;
-  }
-
-  const responseData = await response.json();
-  if (!responseData.success) {
-    Telegram.WebApp.showAlert(data.message);
-    return;
-  }
-
-  return responseData.data.day_availability;
-}
-
 function populateTimeSlots(availability, selectedDate) {
   let scheduleHourSelector = document.getElementById("scheduleHourSelector");
   scheduleHourSelector.innerHTML = "";
@@ -76,8 +20,9 @@ function populateTimeSlots(availability, selectedDate) {
   //remove hours before current hour
   let today = new Date();
   today.setHours(0, 0, 0, 0);
-  selectedDate.setHours(0, 0, 0, 0);
-  if (today.getTime() === selectedDate.getTime()) {
+  const selectedDateClone = new Date(selectedDate);
+  selectedDateClone.setHours(0, 0, 0, 0);
+  if (today.getTime() === selectedDateClone.getTime()) {
     const currentHour = new Date().getUTCHours();
     for (let i = 0; i < hours.length; i++) {
       const hour = hours[i];
@@ -122,16 +67,16 @@ function populateTimeSlots(availability, selectedDate) {
   const minutes = availability[hours[0]];
 
   //remove minutes before current minute
-  today = new Date();
-  for (let i = 0; i < minutes.length; i++) {
-    const minute = minutes[i];
-
-    const dateWithMinute = new Date(today);
-    dateWithMinute.setUTCHours(hours[0], minute, 0, 0);
-
-    if (dateWithMinute.getTime() < today.getTime()) {
-      minutes.splice(i, 1);
-      i--;
+  if (today.getTime() === selectedDateClone.getTime()) {
+    for (let i = 0; i < minutes.length; i++) {
+      const minute = minutes[i];
+      
+      const selectedDateWithCurrentTime = new Date(selectedDate);
+      selectedDateWithCurrentTime.setUTCHours(hours[0], minute, 0, 0);
+      if (selectedDateWithCurrentTime.getTime() < new Date().getTime()) {
+        minutes.splice(i, 1);
+        i--;
+      }
     }
   }
 
@@ -254,26 +199,9 @@ async function onScheduleConfirmed() {
   Telegram.WebApp.MainButton.setText("Scheduling...");
   Telegram.WebApp.MainButton.showProgress();
 
-  const response = await fetch("http://localhost:5000/event/create", {
-    headers: getCommonHeaders(),
-    mode: "cors",
-    method: "POST",
-    body: JSON.stringify(scheduleData),
-  });
+  const response = await createEvent(scheduleData);
 
-  if (response.status === 401) {
-    Telegram.WebApp.showAlert("Unauthenticated");
-    Telegram.WebApp.MainButton.setText("Yes, schedule it!");
-    Telegram.WebApp.MainButton.hideProgress();
-    return;
-  }
-
-  const responseData = await response.json();
-
-  if (!responseData.success) {
-    Telegram.WebApp.showAlert(responseData.message);
-    Telegram.WebApp.MainButton.setText("Yes, schedule it!");
-    Telegram.WebApp.MainButton.hideProgress();
+  if (!response.success) {
     return;
   }
 
@@ -303,11 +231,11 @@ async function onDayClicked(event) {
   const element = event.target;
   element.classList.add("selected");
   const selectedDate = new Date(element.getAttribute("data-date"));
-  blockStep(2);
-  blockStep(3);
+  blockSection(2);
+  blockSection(3);
   const availability = await getDayAvailability(selectedDate);
-  unblockStep(2);
-  unblockStep(3);
+  unblockSection(2);
+  unblockSection(3);
 
   // check if last available slot is before current time (in UTC) and selected date is today
   const today = new Date();
@@ -323,8 +251,8 @@ async function onDayClicked(event) {
     Telegram.WebApp.showAlert(
       "No available time slots, please select another day"
     );
-    hideStep(3);
-    hideStep(2);
+    hideSection(3);
+    hideSection(2);
     Telegram.WebApp.MainButton.hide();
     return;
   }
@@ -336,7 +264,7 @@ async function onDayClicked(event) {
   });
 
   populateTimeSlots(availability, selectedDate);
-  showStep(2);
+  showSection(2);
   Telegram.WebApp.MainButton.show();
   Telegram.WebApp.MainButton.setText("Yes, schedule it!");
   Telegram.WebApp.MainButton.onClick(() => {
@@ -345,36 +273,8 @@ async function onDayClicked(event) {
     }
   });
   setTimeout(() => {
-    showStep(3);
+    showSection(3);
   }, 300);
-}
-
-function populateDays() {
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  const today = new Date();
-  const todayDay = today.getDay();
-
-  const weekDayNames = document.getElementsByClassName("weekDayName");
-  for (let i = 0; i < weekDayNames.length; i++) {
-    const weekDayName = weekDayNames[i];
-    const dayIndex = (todayDay + i) % 7; // 0 - 6
-    weekDayName.innerText = days[dayIndex];
-
-    // Sunday or Saturday
-    if (dayIndex === 0 || dayIndex === 6) {
-      weekDayName.classList.add("weekend");
-    }
-  }
-
-  const weekDayDates = document.getElementsByClassName("weekDay");
-  for (let i = 0; i < weekDayDates.length; i++) {
-    const weekDayDate = weekDayDates[i];
-    const date = new Date(today);
-    date.setDate(date.getDate() + i);
-    weekDayDate.innerText = date.getDate();
-    weekDayDate.setAttribute("data-date", date.toISOString());
-  }
 }
 
 function refreshDayAvailability(schedule) {
@@ -406,6 +306,8 @@ async function main() {
 
   Telegram.WebApp.enableClosingConfirmation();
   onScheduleDataChanged({ name: ownerInfo.name });
+
+  scheduleData.invited_user_id = getUser().id;
   scheduleData.owner_user_id = ownerInfo.id;
 
   const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
@@ -424,5 +326,5 @@ async function main() {
     });
   }
 
-  showStep(1);
+  showSection(1);
 }

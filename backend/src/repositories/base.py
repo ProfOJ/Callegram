@@ -80,6 +80,9 @@ class SQLAlchemyRepository(AbstractRepository):
             for f in filters:
                 if f is not None:
                     stmt = stmt.where(f)
+        if 'options' in kwargs:
+            for option in kwargs['options']:
+                stmt = stmt.options(option)
         res = await self.session.execute(stmt)
         res = [row[0] for row in res.all()]
         return res

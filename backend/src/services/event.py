@@ -1,3 +1,5 @@
+import datetime
+
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate
 from unit_of_work.unit_of_work import AbstractUnitOfWork
 
@@ -8,6 +10,13 @@ class CalendarEventService:
     async def get_events(owner_id: int, uow: AbstractUnitOfWork):
         async with uow:
             return await uow.calendar_events.find_all_by_owner(owner_id)
+
+    @staticmethod
+    async def get_events_for_date(user_id: int, date: datetime.date, uow: AbstractUnitOfWork, only_owner: bool = False):
+        async with uow:
+            if only_owner:
+                return await uow.calendar_events.find_all_at_date(user_id, date)
+            return await uow.calendar_events.find_all_at_date_any_user(user_id, date)
 
     @staticmethod
     async def get_events_by_user_id(user_id: int, uow: AbstractUnitOfWork):

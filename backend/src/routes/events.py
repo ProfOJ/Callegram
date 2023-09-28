@@ -1,3 +1,4 @@
+import datetime
 from datetime import timedelta
 
 from fastapi import APIRouter
@@ -107,10 +108,11 @@ async def schedule_appointment(
 
 @router.get("/get_all")
 async def get_appointments(
+        date: datetime.date,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
-    events = await CalendarEventService.get_events_by_user_id(auth.init_data.user.id, uow)
+    events = await CalendarEventService.get_events_for_date(auth.init_data.user.id, date, uow)
 
     return ApiResponse(
         success=True,

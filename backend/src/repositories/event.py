@@ -1,5 +1,6 @@
 import datetime
 
+from sqlalchemy.orm import joinedload
 from sqlalchemy.sql.operators import or_
 
 from database.models import CalendarEvent as CalendarEventEntity
@@ -90,6 +91,26 @@ class CalendarEventsRepository(SQLAlchemyRepository):
             (self.model.owner_user_id == user_id),
             (self.model.appointment_time >= date),
             (self.model.appointment_time < date + datetime.timedelta(days=1))
+        ])
+
+        return [
+            CalendarEvent(
+                id=str(event.id),
+                owner_user_id=event.owner_user_id,
+                invited_user_id=event.invited_user_id,
+                appointment_time=event.appointment_time,
+                duration=event.duration
+            ) for event in events
+        ]
+
+    async def find_all_at_date_any_user(self, user_id: int, date: datetime.date):
+        events = await super().find_all_by_filter([
+            (self.model.owner_user_id == user_id),
+            (self.model.invited_user_id == user_id),
+            (self.model.appointment_time >= date),
+            (self.model.appointment_time < date + datetime.timedelta(days=1))
+        ], options=[
+            joinedload(self.model.owner_user)
         ])
 
         return [

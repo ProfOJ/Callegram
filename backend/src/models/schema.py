@@ -31,4 +31,3 @@ class CalendarEventSchemaAdd(BaseModel):
 class CalendarEventSchemaUpdate(BaseModel):
     appointment_time: datetime.datetime
     duration: datetime.timedelta
-

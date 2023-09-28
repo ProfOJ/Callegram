@@ -105,8 +105,10 @@ class CalendarEventsRepository(SQLAlchemyRepository):
 
     async def find_all_at_date_any_user(self, user_id: int, date: datetime.date):
         events = await super().find_all_by_filter([
-            (self.model.owner_user_id == user_id),
-            (self.model.invited_user_id == user_id),
+            or_(
+                self.model.owner_user_id == user_id,
+                self.model.invited_user_id == user_id,
+            ),
             (self.model.appointment_time >= date),
             (self.model.appointment_time < date + datetime.timedelta(days=1))
         ], options=[

@@ -128,6 +128,8 @@ function onHourChanged(event, availability) {
     option.innerText = `${minute}`.padStart(2, "0") + " min";
     scheduleMinuteSelector.appendChild(option);
   }
+
+  onScheduleDataChanged({ hour: +hour, minute: +minutes[0] });
 }
 
 function refreshSummary() {

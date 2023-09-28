@@ -79,3 +79,17 @@ class ScheduleService:
                     availability.pop(event_start_hour)
 
             return availability
+
+    @staticmethod
+    async def get_busy_days(uow: AbstractUnitOfWork, user_id: int, from_date: datetime.date, to_date: datetime.date):
+        async with uow:
+            events = await uow.calendar_events.find_all_by_user_id(user_id)
+
+            busy_days = []
+
+            for event in events:
+                if from_date <= event.appointment_time.date() <= to_date:
+                    if event.appointment_time.date() not in busy_days:
+                        busy_days.append(event.appointment_time.date())
+
+            return busy_days

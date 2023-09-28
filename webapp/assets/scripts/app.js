@@ -5,4 +5,5 @@ async function main() {
   }
 
   populateDays();
+  showSection(1);
 }

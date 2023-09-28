@@ -74,7 +74,7 @@ function populateTimeSlots(availability, selectedDate) {
   const hours = Object.keys(availability);
 
   //remove hours before current hour
-  const today = new Date();
+  let today = new Date();
   today.setHours(0, 0, 0, 0);
   selectedDate.setHours(0, 0, 0, 0);
   if (today.getTime() === selectedDate.getTime()) {
@@ -122,14 +122,16 @@ function populateTimeSlots(availability, selectedDate) {
   const minutes = availability[hours[0]];
 
   //remove minutes before current minute
-  if (today.getTime() === selectedDate.getTime()) {
-    const currentMinute = new Date().getUTCMinutes();
-    for (let i = 0; i < minutes.length; i++) {
-      const minute = minutes[i];
-      if (minute < currentMinute) {
-        minutes.splice(i, 1);
-        i--;
-      }
+  today = new Date();
+  for (let i = 0; i < minutes.length; i++) {
+    const minute = minutes[i];
+
+    const dateWithMinute = new Date(today);
+    dateWithMinute.setUTCHours(hours[0], minute, 0, 0);
+
+    if (dateWithMinute.getTime() < today.getTime()) {
+      minutes.splice(i, 1);
+      i--;
     }
   }
 
@@ -277,6 +279,9 @@ async function onScheduleConfirmed() {
 
   Telegram.WebApp.MainButton.hide();
   Telegram.WebApp.MainButton.hideProgress();
+  Telegram.WebApp.onEvent("popupClosed", () => {
+    Telegram.WebApp.close();
+  });
   Telegram.WebApp.showPopup({
     title: "Call scheduled!",
     message: "You will be notified in 30 and 15 minutes before the call",
@@ -286,9 +291,6 @@ async function onScheduleConfirmed() {
         type: "ok",
       },
     ],
-  });
-  Telegram.WebApp.onEvent("popupClosed", () => {
-    Telegram.WebApp.close();
   });
 }
 

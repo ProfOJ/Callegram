@@ -61,7 +61,35 @@
           autoplay: false,
           name: "Profile",
         });
+
+        const yawnAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("earlyScheduleIcon"),
+          path: "assets/animations/yawn.json",
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Yawn",
+        });
+
+        const smileAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("defaultScheduleIcon"),
+          path: "assets/animations/smile.json",
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Smile",
+        });
+
+        const sleepAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("lateScheduleIcon"),
+          path: "assets/animations/sleep.json",
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Sleep",
+        });
       }, 0);
+      Telegram.WebApp.MainButton.show();
     </script>
     <main>
       <div id="tabBar">
@@ -116,7 +144,53 @@
           </div>
         </div>
       </div>
-      <div class="tabContent inactive" data-tab-content="profile">Profile</div>
+      <div class="tabContent inactive" data-tab-content="profile">
+        <!-- <div id="profileName">
+          <div class="font-bold">Name</div>
+          <div id="profileNameValue">Andrew</div>
+        </div> -->
+
+        <div id="scheduleSettings">
+          <p class="sectionTitle">Available days</p>
+          <div id="scheduleSettingsWeekNames">
+            <div class="settingsWeekDayName">Mon</div>
+            <div class="settingsWeekDayName">Tue</div>
+            <div class="settingsWeekDayName">Wed</div>
+            <div class="settingsWeekDayName">Thu</div>
+            <div class="settingsWeekDayName">Fri</div>
+            <div class="settingsWeekDayName unavailable">Sat</div>
+            <div class="settingsWeekDayName unavailable">Sun</div>
+          </div>
+
+          <p class="font-bold" style="font-size: large">Schedule type</p>
+
+          <div id="scheduleTypes">
+            <div class="scheduleType" data-schedule-type="early">
+              <div class="scheduleTypeIcon" id="earlyScheduleIcon"></div>
+              <div class="scheduleTypeTitle">Early</div>
+            </div>
+
+            <div class="scheduleType active" data-schedule-type="default">
+              <div class="scheduleTypeIcon" id="defaultScheduleIcon"></div>
+              <div class="scheduleTypeTitle">Default</div>
+            </div>
+
+            <div class="scheduleType" data-schedule-type="late">
+              <div class="scheduleTypeIcon" id="lateScheduleIcon"></div>
+              <div class="scheduleTypeTitle">Late</div>
+          </div>
+        </div>
+
+          <div id="scheduleTypeTimeFrame">
+            <div id="timeFrameLine" class="early">
+              <div id="timeFrameTimes">From 9:00 to 18:00</div>
+            </div>
+          </div>
+
+          <p class="sectionTitle">Display name</p>
+
+          <input id="profileNameInput" type="text" placeholder="Andrew" />
+      </div>
     </main>
     <!-- <div id="viewport"></div>
     <div id="viewport-params-size"></div>

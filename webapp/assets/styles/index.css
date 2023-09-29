@@ -4,11 +4,13 @@ body {
 
 .sectionTitle {
     font-size: large;
+    font-weight: bold;
 }
 
 #eventsForDay {
     width: 100%;
     padding-top: 15px;
+    padding-bottom: 15px;
 }
 
 #eventsForDayList {
@@ -166,4 +168,135 @@ body {
 
 .tabContent.inactive {
     display: none;
+}
+
+#profileName {
+    font-size: large;
+}
+
+#profileNameValue {
+    margin-top: 5px;
+}
+
+#scheduleSettingsWeekNames {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+}
+
+.settingsWeekDayName {
+    padding: 5px;
+    width: 35px;
+    height: 35px;
+    margin: auto;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: small;
+    line-height: 36px;
+    border-radius: 50%;
+    font-size: large;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.settingsWeekDayName.unavailable {
+    opacity: 0.7;
+}
+
+#scheduleTypes {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.scheduleType {
+    width: 100%;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border-radius: 10px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.scheduleType.active {
+    border: 2px solid var(--tg-theme-text-color);
+}
+
+.scheduleTypeTitle {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.scheduleTypeIcon {
+    width: 24px;
+    height: 24px;
+}
+
+#scheduleTypeTimeFrame {
+    width: 100%;
+    height: 36px;
+    margin-top: 15px;
+    background-color: transparent;
+    border: 1px solid var(--tg-theme-button-color);
+    border-radius: 5px;
+    transition: all 0.2s ease;
+}
+
+#timeFrameLine {
+    width: 64%;
+    height: 100%;
+    background-color: var(--tg-theme-button-color);
+    opacity: 0.9;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+#timeFrameLine.early {
+    margin-left: 0%;
+}
+
+#timeFrameLine.default {
+    margin-left: 14%;
+}
+
+#timeFrameLine.late {
+    margin-left: 36%;
+}
+
+#timeFrameTimes {
+    width: 100%;
+    height: 100%;
+    line-height: 36px;
+    text-align: center;
+    font-size: large;
+    font-weight: bold;
+    color: var(--tg-theme-button-text-color);
+}
+
+#profileNameInput {
+    width: calc(100% - 16px);
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid var(--tg-theme-text-color);
+    background-color: transparent;
+    color: var(--tg-theme-text-color);
+    font-size: large;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#profileNameInput:hover {
+    border: 1px solid var(--tg-theme-button-color);
 }

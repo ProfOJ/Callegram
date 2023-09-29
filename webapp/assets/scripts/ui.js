@@ -13,17 +13,20 @@ function disableFreeDays(busyDays) {
 }
 
 function createEventElement(event, stub = false) {
+  const eventRootContainer = document.createElement("div");
+  eventRootContainer.classList.add("dayEvent");
+
   const eventContainer = document.createElement("div");
-  eventContainer.classList.add("dayEvent");
 
   const eventPerson = document.createElement("div");
   eventPerson.classList.add("dayEventPerson");
   eventContainer.appendChild(eventPerson);
 
   if (stub) {
-    eventContainer.classList.add("dayEventStub");
+    eventRootContainer.classList.add("dayEventStub");
     eventPerson.innerText = "No calls";
-    return eventContainer;
+    eventRootContainer.appendChild(eventContainer);
+    return eventRootContainer;
   }
 
   const userId = getUser().id;
@@ -52,7 +55,17 @@ function createEventElement(event, stub = false) {
   eventContainer.appendChild(eventTime);
   eventContainer.setAttribute("data-event-id", event.id);
 
-  return eventContainer;
+  eventRootContainer.appendChild(eventContainer);
+
+  const eventArrowIcon = document.createElement("div");
+  eventArrowIcon.classList.add("dayEventArrowIcon");
+  const useElement = document.createElement("use");
+  useElement.setAttribute("style", "fill: #000000;")
+  useElement.setAttribute("href", "/assets/images/chevron-right.svg");
+  eventArrowIcon.appendChild(useElement);
+  eventRootContainer.appendChild(eventArrowIcon);
+
+  return eventRootContainer;
 }
 
 function populateEvents(events) {

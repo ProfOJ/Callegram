@@ -42,14 +42,30 @@
     padding: 8px;
     cursor: pointer;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     gap: 5px;
 
     transition: all 0.2s ease;
 }
 
+.dayEvent>div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dayEventArrowIcon {
+    width: 16px;
+    height: 16px;
+    background-color: var(--tg-theme-button-text-color);
+    mask: url(/assets/images/chevron-right.svg) no-repeat center / contain;
+    -webkit-mask: url(/assets/images/chevron-right.svg) no-repeat center / contain;
+}
+
 .dayEventStub {
-    opacity: 0.2;
+    opacity: 0.3;
     cursor: not-allowed;
 }
 

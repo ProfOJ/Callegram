@@ -41,13 +41,13 @@
 
       setTimeout(() => {
         const phoneIconAnimation = bodymovin.loadAnimation({
-        container: document.getElementById('headerAnimation'),
-        path: 'assets/animations/duck_calendar.json',
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        name: "Duck",
-      });
+          container: document.getElementById("headerAnimation"),
+          path: "assets/animations/duck_calendar.json",
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Duck",
+        });
       }, 0);
     </script>
 
@@ -57,16 +57,18 @@
       <p id="eventHeader">Call details</p>
 
       <div class="eventDetail">
-        <span class="font-bold">Date: </span> <span id="eventDate"></span>
+        <span class="font-bold">Date: </span>
+        <span id="eventDateTime" class="loading"></span>
       </div>
 
       <div class="eventDetail">
-        <span class="font-bold">User: </span> <span id="eventUserName"></span>
+        <span class="font-bold">With: </span>
+        <span id="eventUserName" class="loading"></span>
       </div>
 
       <div class="eventDetail">
         <span class="font-bold">Duration: </span>
-        <span id="eventDuration"></span>
+        <span id="eventDuration" class="loading"></span>
       </div>
 
       <div id="eventActions">

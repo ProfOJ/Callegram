@@ -44,3 +44,37 @@ main>button {
     border: none;
     font-weight: bolder;
 }
+
+.eventDetail>span {
+    transition: all 0.2s ease;
+}
+
+.eventDetail>span.loading {
+    height: 14px;
+    width: 80px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    opacity: 0.5;
+    background-color: gray;
+}
+
+.eventDetail>span.loading::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: .5;
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.5) 60%, rgba(255, 255, 255, 0));
+    animation: shimmer 1s infinite;
+    content: '';
+}
+
+@keyframes shimmer {
+    100% {
+        transform: translateX(100%);
+    }
+}

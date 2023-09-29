@@ -26,7 +26,7 @@ class CalendarEventService:
     @staticmethod
     async def get_event(event_id: str, uow: AbstractUnitOfWork):
         async with uow:
-            return await uow.calendar_events.find_one(event_id)
+            return await uow.calendar_events.find_one_or_none(event_id)
 
     @staticmethod
     async def add_event(uow: AbstractUnitOfWork, event: CalendarEventSchemaAdd):

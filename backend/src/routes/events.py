@@ -58,6 +58,35 @@ def is_event_inside_schedule(
     return True
 
 
+@router.get("/get/{event_id}")
+async def get_appointment(
+        event_id: str,
+        uow: UOWDep,
+        auth: AuthService = Depends(auth_service),
+) -> ApiResponse:
+    event = await CalendarEventService.get_event(event_id, uow)
+
+    if not event:
+        return ApiResponse(
+            success=False,
+            message="Appointment not found",
+        )
+
+    if event.owner_user_id != auth.init_data.user.id and event.invited_user_id != auth.init_data.user.id:
+        return ApiResponse(
+            success=False,
+            message="You are not authorized to get this appointment",
+        )
+
+    return ApiResponse(
+        success=True,
+        message="Appointment retrieved",
+        data={
+            "event": event
+        }
+    )
+
+
 @router.post("/create")
 async def schedule_appointment(
         appointment: CalendarEventSchemaAdd,

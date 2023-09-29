@@ -52,14 +52,31 @@ class CalendarEventsRepository(SQLAlchemyRepository):
         )
 
     async def find_one_or_none(self, id: str, **kwargs):
-        event = await super().find_one_or_none(id)
+        event = await super().find_one_or_none(id, options=[
+            joinedload(self.model.owner_user),
+            joinedload(self.model.invited_user)
+        ])
 
         return CalendarEvent(
             id=str(event.id),
             owner_user_id=event.owner_user_id,
             invited_user_id=event.invited_user_id,
             appointment_time=event.appointment_time,
-            duration=event.duration
+            duration=event.duration,
+            owner_user=User(
+                id=event.owner_user.id,
+                name=event.owner_user.name,
+                timezone=event.owner_user.timezone,
+                notification_time=[],
+                schedule=None
+            ) if event.owner_user else None,
+            invited_user=User(
+                id=event.invited_user.id,
+                name=event.invited_user.name,
+                timezone=event.invited_user.timezone,
+                notification_time=[],
+                schedule=None
+            ) if event.invited_user else None
         ) if event else None
 
     async def find_one_or_none_by_user_id(self, user_id: int):

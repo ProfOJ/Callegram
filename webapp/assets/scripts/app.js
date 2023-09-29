@@ -34,20 +34,17 @@ async function main() {
     return;
   }
 
-  const tabs = document.getElementsByClassName("tab");
-  for (const tab of tabs) {
-    tab.addEventListener("click", () => {
-      switchTab(tab);
-    });
-  }
-
+  initTabs();
   populateDays();
+
+  initProfile(authData.user);
 
   const today = new Date();
   const dateEnd = new Date(
     Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + 15)
   );
   today.setUTCHours(0, 0, 0, 0);
+
   const busyDays = await getBusyDays(today, dateEnd);
 
   busyDays.sort((a, b) => {
@@ -57,23 +54,7 @@ async function main() {
   });
 
   disableFreeDays(busyDays);
-
-  const weekDayElements = document.getElementsByClassName("weekDay");
-  let checkedFirstBusyDay = false;
-  for (const weekDayElement of weekDayElements) {
-    if (weekDayElement.classList.contains("unavailable")) {
-      continue;
-    }
-
-    if (!checkedFirstBusyDay) {
-      weekDayElement.classList.add("selected");
-      checkedFirstBusyDay = true;
-    }
-
-    weekDayElement.addEventListener("click", (event) => {
-      onDayClicked(event).then(() => {});
-    });
-  }
+  initWeekDays();
   showSection(1);
 
   const firstBusyDate = new Date(busyDays[0]);
@@ -85,6 +66,7 @@ async function main() {
     )
   );
   const events = await getEventsForDate(firstBusyDateUTC);
+
   populateEvents(events);
   showSection(2);
 }

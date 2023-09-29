@@ -182,3 +182,140 @@ function switchTab(tab) {
       break;
   }
 }
+
+function initTabs() {
+  const tabs = document.getElementsByClassName("tab");
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => {
+      switchTab(tab);
+    });
+  }
+}
+
+function initWeekDays() {
+  const weekDayElements = document.getElementsByClassName("weekDay");
+  let checkedFirstBusyDay = false;
+  for (const weekDayElement of weekDayElements) {
+    if (weekDayElement.classList.contains("unavailable")) {
+      continue;
+    }
+
+    if (!checkedFirstBusyDay) {
+      weekDayElement.classList.add("selected");
+      checkedFirstBusyDay = true;
+    }
+
+    weekDayElement.addEventListener("click", (event) => {
+      onDayClicked(event).then(() => {});
+    });
+  }
+}
+
+function refreshProfileDayAvailability(windows) {
+  const weekDays = document.getElementsByClassName("settingsWeekDayName");
+
+  for (let i = 0; i < weekDays.length; i++) {
+    const weekDay = weekDays[i];
+    const dayOfWeek = i + 1;
+    const daySchedule = windows[dayOfWeek - 1];
+
+    if (daySchedule[0] === 0 && daySchedule[1] === 0) {
+      // from 00:00 to 00:00 - unavailable
+      weekDay.classList.add("unavailable");
+      continue;
+    }
+
+    weekDay.classList.remove("unavailable");
+  }
+
+  const weekDayElements = document.getElementsByClassName("settingsWeekDayName");
+
+  for (const weekDayElement of weekDayElements) {
+    weekDayElement.onclick = () => {
+      weekDayElement.classList.toggle("unavailable");
+    };
+  }
+}
+
+function initScheduleType(windows) {
+  const scheduleTypes = document.getElementsByClassName("scheduleType");
+  for (const scheduleType of scheduleTypes) {
+    scheduleType.onclick = () => {
+      selectScheduleType(scheduleType.getAttribute("data-schedule-type"));
+    };
+  }
+
+  // go through windows and find the first available window
+  const firstAvailableDay = windows.find((day) => {
+    return day[0] !== 0 || day[1] !== 0;
+  });
+
+  const firstAvailableHour = firstAvailableDay[0];
+  const timezoneOffset = new Date().getTimezoneOffset();
+  const localHour = (firstAvailableHour - timezoneOffset) / 60;
+
+  switch (localHour) {
+    case 7:
+      selectScheduleType("early");
+      break;
+
+    case 9:
+      selectScheduleType("default");
+      break;
+
+    case 12:
+      selectScheduleType("late");
+      break;
+
+    default:
+      break;
+  }
+}
+
+function selectScheduleType(scheduleType) {
+  // type "early" starts from 7:00 and ends at 16:00
+  // type "default" starts from 9:00 and ends at 18:00
+  // type "late" starts from 12:00 and ends at 21:00
+  const scheduleTypes = document.getElementsByClassName("scheduleType");
+  const timeFrameLine = document.getElementById("timeFrameLine");
+
+  for (const scheduleTypeEl of scheduleTypes) {
+    scheduleTypeEl.classList.remove("active");
+
+    const elementType = scheduleTypeEl.getAttribute("data-schedule-type");
+    if (elementType == scheduleType) {
+      scheduleTypeEl.classList.add("active");
+    }
+  }
+
+  timeFrameLine.classList = `timeFrameLine ${scheduleType}`;
+  const timeFrameTimes = document.getElementById("timeFrameTimes");
+
+  switch (scheduleType) {
+    case "early":
+      timeFrameTimes.innerText = "From 7:00 to 16:00";
+      break;
+
+    case "default":
+      timeFrameTimes.innerText = "From 9:00 to 18:00";
+      break;
+
+    case "late":
+      timeFrameTimes.innerText = "From 12:00 to 21:00";
+      break;
+
+    default:
+      break;
+  }
+}
+
+function initProfile(authData) {
+  refreshProfileDayAvailability(authData.schedule.windows);
+  initScheduleType(authData.schedule.windows);
+
+  const profileNameInput = document.getElementById("profileNameInput");
+  profileNameInput.value = authData.name;
+  profileNameInput.addEventListener("change", (event) => {
+    onProfileDataChanged({ name: event.target.value });
+  });
+}

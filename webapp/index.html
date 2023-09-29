@@ -89,7 +89,6 @@
           name: "Sleep",
         });
       }, 0);
-      Telegram.WebApp.MainButton.show();
     </script>
     <main>
       <div id="tabBar">
@@ -158,11 +157,11 @@
             <div class="settingsWeekDayName">Wed</div>
             <div class="settingsWeekDayName">Thu</div>
             <div class="settingsWeekDayName">Fri</div>
-            <div class="settingsWeekDayName unavailable">Sat</div>
-            <div class="settingsWeekDayName unavailable">Sun</div>
+            <div class="settingsWeekDayName">Sat</div>
+            <div class="settingsWeekDayName">Sun</div>
           </div>
 
-          <p class="font-bold" style="font-size: large">Schedule type</p>
+          <p class="sectionTitle">Schedule type</p>
 
           <div id="scheduleTypes">
             <div class="scheduleType" data-schedule-type="early">
@@ -170,7 +169,7 @@
               <div class="scheduleTypeTitle">Early</div>
             </div>
 
-            <div class="scheduleType active" data-schedule-type="default">
+            <div class="scheduleType" data-schedule-type="default">
               <div class="scheduleTypeIcon" id="defaultScheduleIcon"></div>
               <div class="scheduleTypeTitle">Default</div>
             </div>
@@ -182,8 +181,8 @@
         </div>
 
           <div id="scheduleTypeTimeFrame">
-            <div id="timeFrameLine" class="early">
-              <div id="timeFrameTimes">From 9:00 to 18:00</div>
+            <div id="timeFrameLine">
+              <div id="timeFrameTimes"></div>
             </div>
           </div>
 

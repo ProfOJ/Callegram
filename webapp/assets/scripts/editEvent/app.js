@@ -1,6 +1,6 @@
+let calendarEvent = null;
+
 const scheduleData = {
-  owner_user_id: null,
-  invited_user_id: null,
   appointment_time: new Date(),
   duration: "PT30M", // hardcoded on server anyway
 };
@@ -67,11 +67,11 @@ function onScheduleDataChanged(newData) {
   refreshSummary();
 }
 
-async function onScheduleConfirmed() {
-  Telegram.WebApp.MainButton.setText("Scheduling...");
+async function onEditConfirmed() {
+  Telegram.WebApp.MainButton.setText("Editing...");
   Telegram.WebApp.MainButton.showProgress();
 
-  const response = await createEvent(scheduleData);
+  const response = await editEvent(calendarEvent.id, scheduleData);
 
   if (!response.success) {
     return;
@@ -80,10 +80,10 @@ async function onScheduleConfirmed() {
   Telegram.WebApp.MainButton.hide();
   Telegram.WebApp.MainButton.hideProgress();
   Telegram.WebApp.onEvent("popupClosed", () => {
-    Telegram.WebApp.close();
+    window.location.href = "/";
   });
   Telegram.WebApp.showPopup({
-    title: "Call scheduled!",
+    title: "Call edited!",
     message: "You will be notified in 30 and 15 minutes before the call",
     buttons: [
       {
@@ -105,7 +105,10 @@ async function onDayClicked(event) {
   const selectedDate = new Date(element.getAttribute("data-date"));
   blockSection(2);
   blockSection(3);
-  const availability = await getDayAvailability(selectedDate, scheduleData.owner_user_id);
+  const availability = await getDayAvailability(
+    selectedDate,
+    calendarEvent.owner_user_id
+  );
   unblockSection(2);
   unblockSection(3);
 
@@ -129,7 +132,6 @@ async function onDayClicked(event) {
     return;
   }
 
-  console.log(populateTimeSlots);
   const [
     selectedHour, // first available hour
     selectedMinute, // first available minute
@@ -140,18 +142,17 @@ async function onDayClicked(event) {
     hour: selectedHour,
     minute: selectedMinute,
   });
-
   showSection(2);
-  Telegram.WebApp.MainButton.show();
-  Telegram.WebApp.MainButton.setText("Yes, schedule it!");
-  Telegram.WebApp.MainButton.onClick(() => {
-    if (Telegram.WebApp.MainButton.isActive) {
-      onScheduleConfirmed().then(() => {});
-    }
-  });
   setTimeout(() => {
     showSection(3);
-  }, 300);
+    Telegram.WebApp.MainButton.show();
+    Telegram.WebApp.MainButton.setText("Yes, edit it!");
+    Telegram.WebApp.MainButton.onClick(() => {
+      if (Telegram.WebApp.MainButton.isActive) {
+        onEditConfirmed().then(() => {});
+      }
+    });
+  }, 100);
 }
 
 async function main() {
@@ -160,21 +161,25 @@ async function main() {
     return;
   }
 
-  const initData = getInitData();
-  const ownerUserId = initData.start_param.split("_")[1];
-  const ownerInfo = await getOwnerAppointmentInfo(ownerUserId);
+  Telegram.WebApp.enableClosingConfirmation();
+  Telegram.WebApp.BackButton.onClick(() => {
+    Telegram.WebApp.disableClosingConfirmation();
+    window.location.href = "/eventDetails?eventId=" + calendarEvent.id;
+  });
+
+  const eventId = new URLSearchParams(window.location.search).get("eventId");
+  calendarEvent = await getEventDetails(eventId);
+  if (!calendarEvent) {
+    return;
+  }
+
+  const ownerInfo = await getOwnerAppointmentInfo(calendarEvent.owner_user_id);
   if (!ownerInfo) {
     return;
   }
 
-  Telegram.WebApp.enableClosingConfirmation();
-  onScheduleDataChanged({ name: ownerInfo.name });
-
-  scheduleData.invited_user_id = getUser().id;
-  scheduleData.owner_user_id = ownerInfo.id;
-
-  const scheduleOwnerNameEl = document.getElementById("scheduleOwnerName");
-  scheduleOwnerNameEl.innerText = ownerInfo.name;
+  const scheduleOwnerName = document.getElementById("scheduleOwnerName");
+  scheduleOwnerName.innerText = ownerInfo.name;
 
   refreshDayAvailability(ownerInfo.schedule.windows);
 
@@ -189,5 +194,23 @@ async function main() {
     });
   }
 
+  // get first available day and simulate a click
+  const firstAvailableDay = document.getElementsByClassName("weekDay")[0];
+  firstAvailableDay.click();
+
+  onScheduleDataChanged({
+    name: ownerInfo.name,
+    hour: new Date(calendarEvent.appointment_time).getUTCHours(),
+    minute: new Date(calendarEvent.appointment_time).getUTCMinutes(),
+    date: new Date(calendarEvent.appointment_time),
+    duration: calendarEvent.duration,
+  });
+
   showSection(1);
+  setTimeout(() => {
+    showSection(2);
+    setTimeout(() => {
+      showSection(3);
+    }, 100);
+  }, 100);
 }

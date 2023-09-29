@@ -132,7 +132,7 @@ function populateEvents(events) {
       const eventDate = new Date(event.appointment_time + "Z");
       const eventMinutes = eventDate.getMinutes();
 
-      if (eventMinutes === 0) {
+      if (eventMinutes === 30) {
         hourEventsList.appendChild(stubEventContainer);
         hourEventsList.appendChild(eventContainer);
       } else {

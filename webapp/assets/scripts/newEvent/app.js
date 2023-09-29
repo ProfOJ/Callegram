@@ -105,7 +105,7 @@ async function onDayClicked(event) {
   const selectedDate = new Date(element.getAttribute("data-date"));
   blockSection(2);
   blockSection(3);
-  const availability = await getDayAvailability(selectedDate);
+  const availability = await getDayAvailability(selectedDate, scheduleData.owner_user_id);
   unblockSection(2);
   unblockSection(3);
 
@@ -155,7 +155,9 @@ async function main() {
     return;
   }
 
-  const ownerInfo = await getOwnerAppointmentInfo();
+  const initData = getInitData();
+  const ownerUserId = initData.start_param.split("_")[1];
+  const ownerInfo = await getOwnerAppointmentInfo(ownerUserId);
   if (!ownerInfo) {
     return;
   }

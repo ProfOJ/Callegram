@@ -34,6 +34,13 @@ async function main() {
     return;
   }
 
+  const tabs = document.getElementsByClassName("tab");
+  for (const tab of tabs) {
+    tab.addEventListener("click", () => {
+      switchTab(tab);
+    });
+  }
+
   populateDays();
 
   const today = new Date();

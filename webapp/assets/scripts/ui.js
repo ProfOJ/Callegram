@@ -60,7 +60,7 @@ function createEventElement(event, stub = false) {
   const eventArrowIcon = document.createElement("div");
   eventArrowIcon.classList.add("dayEventArrowIcon");
   const useElement = document.createElement("use");
-  useElement.setAttribute("style", "fill: #000000;")
+  useElement.setAttribute("style", "fill: #000000;");
   useElement.setAttribute("href", "/assets/images/chevron-right.svg");
   eventArrowIcon.appendChild(useElement);
   eventRootContainer.appendChild(eventArrowIcon);
@@ -144,5 +144,41 @@ function populateEvents(events) {
     hourEventsContainer.appendChild(hourEventsWindow);
     hourEventsContainer.appendChild(hourEventsList);
     dayEventsContainer.appendChild(hourEventsContainer);
+  }
+}
+
+function showTabContent(tabName) {
+  const tabContents = document.getElementsByClassName("tabContent");
+  for (const tabContent of tabContents) {
+    if (tabContent.getAttribute("data-tab-content") !== tabName) {
+      tabContent.classList.add("inactive");
+      continue;
+    }
+
+    tabContent.classList.remove("inactive");
+  }
+}
+
+function switchTab(tab) {
+  const tabName = tab.getAttribute("data-tab");
+  const tabBarIndicator = document.getElementById("tabBarIndicator");
+
+  switch (tabName) {
+    case "calls":
+      callsAnimation.goToAndStop(0);
+      callsAnimation.play();
+      tabBarIndicator.style.gridColumn = "1 / 2";
+      showTabContent("calls");
+      break;
+
+    case "profile":
+      profileAnimation.goToAndStop(0);
+      profileAnimation.play();
+      tabBarIndicator.style.gridColumn = "2 / 3";
+      showTabContent("profile");
+      break;
+
+    default:
+      break;
   }
 }

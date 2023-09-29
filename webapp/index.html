@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="assets/styles/shared.css" />
     <link rel="stylesheet" href="assets/styles/index.css" />
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
+
     <!-- original version -->
     <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
 
@@ -37,44 +39,84 @@
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initTelegramApp(debug);
       main().then(() => {});
+
+      let callsAnimation;
+      let profileAnimation;
+
+      setTimeout(() => {
+        callsAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("tabIconCalls"),
+          path: "assets/animations/clock.json",
+          renderer: "svg",
+          loop: false,
+          autoplay: true,
+          name: "Calls",
+        });
+
+        profileAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("tabIconProfile"),
+          path: "assets/animations/people.json",
+          renderer: "svg",
+          loop: false,
+          autoplay: false,
+          name: "Profile",
+        });
+      }, 0);
     </script>
     <main>
-      <div id="dayPicker" class="pageSection hidden" data-section="1">
-        <p class="sectionTitle">Your calls for the next 2 weeks</p>
-
-        <div class="scheduleWeekNames">
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
-          <div class="weekDayName">.</div>
+      <div id="tabBar">
+        <div id="tabs">
+          <div class="tab" data-tab="calls">
+            <div class="tabIcon" id="tabIconCalls"></div>
+            <div class="tabTitle">Calls</div>
+          </div>
+          <div class="tab" data-tab="profile">
+            <div class="tabIcon" id="tabIconProfile"></div>
+            <div class="tabTitle">Profile</div>
+          </div>
         </div>
-
-        <div class="scheduleWeekDays">
-          <div class="weekDay today">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-          <div class="weekDay">.</div>
-        </div>
+        <div id="tabBarIndicator"></div>
       </div>
 
-      <div id="eventsForDay" class="pageSection hidden" data-section="2">
-        <div id="eventsForDayList">
-          <!-- populated dynamically -->
+      <div class="tabContent" data-tab-content="calls">
+        <div id="dayPicker" class="pageSection hidden" data-section="1">
+          <p class="sectionTitle">Your calls for the next 2 weeks</p>
+
+          <div class="scheduleWeekNames">
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+            <div class="weekDayName">.</div>
+          </div>
+
+          <div class="scheduleWeekDays">
+            <div class="weekDay today">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+            <div class="weekDay">.</div>
+          </div>
+        </div>
+
+        <div id="eventsForDay" class="pageSection hidden" data-section="2">
+          <div id="eventsForDayList">
+            <!-- populated dynamically -->
+          </div>
         </div>
       </div>
+      <div class="tabContent inactive" data-tab-content="profile">Profile</div>
     </main>
     <!-- <div id="viewport"></div>
     <div id="viewport-params-size"></div>

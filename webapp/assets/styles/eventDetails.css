@@ -1,0 +1,46 @@
+#headerAnimation {
+    height: 130px;
+    max-height: 130px;
+    width: 130px;
+    margin: auto;
+}
+
+#eventHeader {
+    font-size: large;
+    font-weight: bold;
+}
+
+main>p,
+main>div,
+main>button {
+    font-size: larger;
+}
+
+.eventDetail {
+    margin-bottom: 5px;
+}
+
+#eventActions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: fixed;
+    bottom: 8px;
+    left: 24px;
+    right: 24px;
+}
+
+#eventActions>button {
+    width: 100%;
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border-radius: 5px;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    outline: none;
+    border: none;
+    font-weight: bolder;
+}

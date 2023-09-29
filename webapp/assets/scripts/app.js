@@ -25,7 +25,7 @@ async function onDayClicked(event) {
 }
 
 async function onEventClicked(event) {
-  console.log(event.id);
+  window.location.href = `/eventDetails?eventId=${event.id}`;
 }
 
 async function main() {

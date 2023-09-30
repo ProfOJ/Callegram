@@ -195,8 +195,12 @@ async function main() {
   }
 
   // get first available day and simulate a click
-  const firstAvailableDay = document.getElementsByClassName("weekDay")[0];
-  firstAvailableDay.click();
+  for (const weekDayElement of weekDayElements) {
+    if (!weekDayElement.classList.contains("unavailable")) {
+      weekDayElement.click();
+      break;
+    }
+  }
 
   onScheduleDataChanged({
     name: ownerInfo.name,

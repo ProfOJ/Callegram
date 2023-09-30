@@ -73,6 +73,9 @@ class ScheduleService:
                 event_start_hour = event.appointment_time.hour
                 event_start_minute = event.appointment_time.minute
 
+                if event_start_hour not in availability:
+                    continue
+
                 if len(availability[event_start_hour]) == 2:
                     availability[event_start_hour].remove(event_start_minute)
                 else:

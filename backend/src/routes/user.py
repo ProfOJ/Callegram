@@ -36,9 +36,9 @@ async def user_auth(
         message="User authenticated",
         data={
             "user": User(
-                id=auth.init_data.user.id,
-                name=auth.init_data.user.first_name,
-                timezone=user_auth_data.timezone,
+                id=user.id,
+                name=user.name,
+                timezone=user.timezone,
                 notification_time=user.notification_time,
                 schedule=schedule
             )

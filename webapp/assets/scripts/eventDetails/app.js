@@ -48,7 +48,10 @@ async function main() {
     window.location.href = "/";
   });
 
-  const eventId = new URLSearchParams(window.location.search).get("eventId");
+  let eventId = new URLSearchParams(window.location.search).get("eventId");
+  if (!eventId) {
+    eventId = getInitData().start_param;
+  }
   const event = await getEventDetails(eventId);
 
   displayEvent(event);

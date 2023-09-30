@@ -1,5 +1,7 @@
 async function onDeleteClicked(eventId) {
+  Telegram.WebApp.MainButton.showProgress();
   const response = await deleteEvent(eventId);
+  Telegram.WebApp.MainButton.hideProgress();
   if (!response.success) {
     Telegram.WebApp.showAlert(response.message);
     return;

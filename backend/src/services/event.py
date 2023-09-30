@@ -51,11 +51,11 @@ class CalendarEventService:
     async def delete_event(uow: AbstractUnitOfWork, event_id: str, deleted_by_user_id: int):
         async with uow:
             event = await CalendarEventService.get_event(event_id, uow)
+            await uow.commit()
             event_id = await uow.calendar_events.delete_one(event_id)
             telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
             await telegram_bot_service.send_call_canceled_by_user_notification(deleted_by_user_id, event)
             await telegram_bot_service.send_call_canceled_of_user_notification(deleted_by_user_id, event)
-            await uow.commit()
             return event_id
 
     @staticmethod
@@ -66,9 +66,9 @@ class CalendarEventService:
                 'appointment_time': event.appointment_time.replace(tzinfo=None),
                 'duration': event.duration,
             })
+            await uow.commit()
             event = await CalendarEventService.get_event(event_id, uow)
             telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
             await telegram_bot_service.send_call_edited_by_user_notification(edited_by_user_id, event)
             await telegram_bot_service.send_call_edited_of_user_notification(edited_by_user_id, event)
-            await uow.commit()
             return event

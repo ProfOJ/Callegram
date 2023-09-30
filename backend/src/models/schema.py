@@ -13,12 +13,17 @@ class UserSchemaAuth(BaseModel):
     timezone: int
 
 
-class UserSchemaUpdate:
+class UserSchemaProfileUpdate(BaseModel):
+    name: str
+    timezone: int
+    schedule_days: list[int]
+    schedule_type: str
 
-    def __init__(self, name: str, timezone: int, notification_time: list[int]):
-        self.name = name
-        self.timezone = timezone
-        self.notification_time = notification_time
+
+class UserSchemaUpdate(BaseModel):
+    name: str
+    timezone: int
+    notification_time: list[int]
 
 
 class CalendarEventSchemaAdd(BaseModel):

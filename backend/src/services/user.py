@@ -1,12 +1,46 @@
-from models.schema import UserSchemaUpdate
+from models.schema import UserSchemaUpdate, UserSchemaProfileUpdate
 from models.view import Schedule, User
 from unit_of_work.unit_of_work import AbstractUnitOfWork
+
+SCHEDULE_TYPE_EARLY = {
+    'start': 7 * 60,
+    'end': 16 * 60
+}
+
+SCHEDULE_TYPE_DEFAULT = {
+    'start': 9 * 60,
+    'end': 18 * 60
+}
+
+SCHEDULE_TYPE_LATE = {
+    'start': 12 * 60,
+    'end': 21 * 60
+}
 
 
 class UserService:
 
     @staticmethod
-    async def register_user(uow: AbstractUnitOfWork, user: User) -> int:
+    def get_windows(schedule_type: str, weekdays: list[int], timezone: int = 0):
+        windows = []
+        for day in range(7):
+            if day not in weekdays:
+                windows.append([0, 0])
+                continue
+
+            match schedule_type:
+                case 'early':
+                    windows.append([SCHEDULE_TYPE_EARLY['start'] + timezone, SCHEDULE_TYPE_EARLY['end'] + timezone])
+                case 'default':
+                    windows.append([SCHEDULE_TYPE_DEFAULT['start'] + timezone, SCHEDULE_TYPE_DEFAULT['end'] + timezone])
+                case 'late':
+                    windows.append([SCHEDULE_TYPE_LATE['start'] + timezone, SCHEDULE_TYPE_LATE['end'] + timezone])
+                case _:
+                    windows.append([0, 0])
+
+        return windows
+
+    async def register_user(self, uow: AbstractUnitOfWork, user: User) -> int:
         async with uow:
             user_id = await uow.users.add_one({
                 'id': user.id,
@@ -14,17 +48,9 @@ class UserService:
                 'timezone': user.timezone,
                 'notification_time': [15, 30]  # default notification time
             })
-            schedule_id = await uow.schedules.add_one({
+            await uow.schedules.add_one({
                 'user_id': user_id,
-                'windows': [
-                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
-                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
-                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
-                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
-                    [9 * 60 + user.timezone, 19 * 60 + user.timezone],
-                    [0, 0],  # unavailable on weekends
-                    [0, 0],  # unavailable on weekends
-                ],
+                'windows': self.get_windows('default', list(range(5)))
             })
             await uow.commit()
             return user_id
@@ -75,6 +101,17 @@ class UserService:
             })
             await uow.commit()
             return user
+
+    async def update_user_profile(self, uow: AbstractUnitOfWork, user_id: int, user: UserSchemaProfileUpdate):
+        async with uow:
+            await uow.users.update_one(user_id, {'name': user.name})
+            schedule = await uow.schedules.find_one_by_user_id(user_id)
+
+            await uow.schedules.update_one(schedule.id, {
+                'windows': self.get_windows(user.schedule_type, user.schedule_days, user.timezone),
+            })
+            await uow.commit()
+            return user_id
 
     @staticmethod
     async def delete_user(uow: AbstractUnitOfWork, user_id: int):

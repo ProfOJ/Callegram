@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from dependencies import UOWDep, auth_service
-from models.schema import UserSchemaAuth, ApiResponse
+from models.schema import UserSchemaAuth, ApiResponse, UserSchemaProfileUpdate
 from models.view import User
 from services.auth import AuthService
 from services.schedule import ScheduleService
@@ -71,5 +71,39 @@ async def get_user_info(
                 notification_time=[],
                 schedule=user.schedule
             )
+        }
+    )
+
+
+@router.post("/update/{user_id}")
+async def update_user_info(
+        user_id: int,
+        user_data: UserSchemaProfileUpdate,
+        uow: UOWDep,
+        auth: AuthService = Depends(auth_service),
+) -> ApiResponse:
+    if user_id != auth.init_data.user.id:
+        return ApiResponse(
+            success=False,
+            message="You are not authorized to update this user",
+        )
+
+    user = await UserService.get_user(uow, user_id)
+
+    if not user:
+        return ApiResponse(
+            success=False,
+            message="User not found",
+        )
+
+    await UserService().update_user_profile(uow, user_id, user_data)
+
+    user = await UserService.get_user(uow, user_id)
+
+    return ApiResponse(
+        success=True,
+        message="User updated",
+        data={
+            "user": user
         }
     )

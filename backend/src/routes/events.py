@@ -172,7 +172,7 @@ async def delete_appointment(
             message="You are not authorized to delete this appointment",
         )
 
-    await CalendarEventService.delete_event(uow, event_id)
+    await CalendarEventService.delete_event(uow, event_id, auth.init_data.user.id)
 
     return ApiResponse(
         success=True,
@@ -226,7 +226,7 @@ async def edit_appointment(
             message="Appointment is overlapping with existing appointment",
         )
 
-    await CalendarEventService.edit_event(uow, event_id, appointment)
+    await CalendarEventService.edit_event(uow, event_id, appointment, auth.init_data.user.id)
 
     return ApiResponse(
         success=True,

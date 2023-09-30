@@ -31,7 +31,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update_one(self, id, data):
+    async def update_one(self, id, data, **kwargs):
         raise NotImplementedError
 
     @abstractmethod
@@ -103,8 +103,11 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def update_one(self, id: str | int, data: dict):
+    async def update_one(self, id: str | int, data: dict, **kwargs):
         stmt = update(self.model).where(self.model.id == id).values(**data)
+        if 'options' in kwargs:
+            for option in kwargs['options']:
+                stmt = stmt.options(option)
         res = await self.session.execute(stmt)
         return res
 

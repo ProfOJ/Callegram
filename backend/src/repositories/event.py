@@ -156,3 +156,9 @@ class CalendarEventsRepository(SQLAlchemyRepository):
                 ) if event.invited_user else None
             ) for event in events
         ]
+
+    async def update_one(self, id: str, data: dict, **kwargs):
+        await super().update_one(id, data, options=[
+            joinedload(self.model.owner_user),
+            joinedload(self.model.invited_user)
+        ])

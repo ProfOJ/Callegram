@@ -1,6 +1,9 @@
 import datetime
 
+from config import BOT_TOKEN
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate
+from services.bot import TelegramBotService
+
 from unit_of_work.unit_of_work import AbstractUnitOfWork
 
 
@@ -38,21 +41,34 @@ class CalendarEventService:
                 'duration': event.duration,
             })
             await uow.commit()
+            event = await CalendarEventService.get_event(event_id, uow)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            await telegram_bot_service.send_owner_call_booked_notification(event)
+            await telegram_bot_service.send_invited_call_booked_notification(event)
             return event_id
 
     @staticmethod
-    async def delete_event(uow: AbstractUnitOfWork, event_id: str):
+    async def delete_event(uow: AbstractUnitOfWork, event_id: str, deleted_by_user_id: int):
         async with uow:
+            event = await CalendarEventService.get_event(event_id, uow)
             event_id = await uow.calendar_events.delete_one(event_id)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            await telegram_bot_service.send_call_canceled_by_user_notification(deleted_by_user_id, event)
+            await telegram_bot_service.send_call_canceled_of_user_notification(deleted_by_user_id, event)
             await uow.commit()
             return event_id
 
     @staticmethod
-    async def edit_event(uow: AbstractUnitOfWork, event_id: str, event: CalendarEventSchemaUpdate):
+    async def edit_event(uow: AbstractUnitOfWork, event_id: str, event: CalendarEventSchemaUpdate,
+                         edited_by_user_id: int):
         async with uow:
-            event = await uow.calendar_events.update_one(event_id, {
+            await uow.calendar_events.update_one(event_id, {
                 'appointment_time': event.appointment_time.replace(tzinfo=None),
                 'duration': event.duration,
             })
+            event = await CalendarEventService.get_event(event_id, uow)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            await telegram_bot_service.send_call_edited_by_user_notification(edited_by_user_id, event)
+            await telegram_bot_service.send_call_edited_of_user_notification(edited_by_user_id, event)
             await uow.commit()
             return event

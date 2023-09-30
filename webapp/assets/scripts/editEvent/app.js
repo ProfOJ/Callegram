@@ -22,7 +22,7 @@ function onHourChanged(event, availability) {
   for (const minute of minutes) {
     const option = document.createElement("option");
     option.value = minute;
-    option.innerText = `${minute}`.padStart(2, "0") + " min";
+    option.innerText = `${minute}`.padStart(2, "0") + "min";
     scheduleMinuteSelector.appendChild(option);
   }
 

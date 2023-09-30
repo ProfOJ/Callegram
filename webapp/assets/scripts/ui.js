@@ -169,6 +169,7 @@ function switchTab(tab) {
       callsAnimation.play();
       tabBarIndicator.style.gridColumn = "1 / 2";
       showTabContent("calls");
+      Telegram.WebApp.MainButton.hide();
       break;
 
     case "profile":
@@ -176,6 +177,7 @@ function switchTab(tab) {
       profileAnimation.play();
       tabBarIndicator.style.gridColumn = "2 / 3";
       showTabContent("profile");
+      Telegram.WebApp.MainButton.show();
       break;
 
     default:
@@ -212,27 +214,46 @@ function initWeekDays() {
 }
 
 function refreshProfileDayAvailability(windows) {
+  const scheduleDays = [0, 1, 2, 3, 4, 5, 6];
   const weekDays = document.getElementsByClassName("settingsWeekDayName");
 
   for (let i = 0; i < weekDays.length; i++) {
     const weekDay = weekDays[i];
-    const dayOfWeek = i + 1;
-    const daySchedule = windows[dayOfWeek - 1];
+    const daySchedule = windows[i];
 
     if (daySchedule[0] === 0 && daySchedule[1] === 0) {
       // from 00:00 to 00:00 - unavailable
       weekDay.classList.add("unavailable");
+      scheduleDays.splice(scheduleDays.indexOf(i), 1);
       continue;
     }
 
     weekDay.classList.remove("unavailable");
   }
 
-  const weekDayElements = document.getElementsByClassName("settingsWeekDayName");
+  initialProfileData.scheduleDays = [...scheduleDays];
+  profileData.schedule_days = [...scheduleDays];
 
-  for (const weekDayElement of weekDayElements) {
+  const weekDayElements = document.getElementsByClassName(
+    "settingsWeekDayName"
+  );
+
+  for (let dayIndex = 0; dayIndex < weekDayElements.length; dayIndex++) {
+    const weekDayElement = weekDayElements[dayIndex];
     weekDayElement.onclick = () => {
-      weekDayElement.classList.toggle("unavailable");
+      const oldScheduleDays = [...profileData.schedule_days];
+
+      if (weekDayElement.classList.contains("unavailable")) {
+        weekDayElement.classList.remove("unavailable");
+        oldScheduleDays.push(dayIndex);
+        oldScheduleDays.sort();
+        onProfileDataChanged({ scheduleDays: oldScheduleDays });
+        return;
+      }
+
+      weekDayElement.classList.add("unavailable");
+      oldScheduleDays.splice(oldScheduleDays.indexOf(dayIndex), 1);
+      onProfileDataChanged({ scheduleDays: oldScheduleDays });
     };
   }
 }
@@ -256,14 +277,20 @@ function initScheduleType(windows) {
 
   switch (localHour) {
     case 7:
+      initialProfileData.scheduleType = "early";
+      profileData.schedule_type = "early";
       selectScheduleType("early");
       break;
 
     case 9:
+      initialProfileData.scheduleType = "default";
+      profileData.schedule_type = "default";
       selectScheduleType("default");
       break;
 
     case 12:
+      initialProfileData.scheduleType = "late";
+      profileData.schedule_type = "late";
       selectScheduleType("late");
       break;
 
@@ -307,15 +334,17 @@ function selectScheduleType(scheduleType) {
     default:
       break;
   }
+
+  onProfileDataChanged({ scheduleType: scheduleType });
 }
 
 function initProfile(authData) {
-  refreshProfileDayAvailability(authData.schedule.windows);
-  initScheduleType(authData.schedule.windows);
+  refreshProfileDayAvailability(authData.user.schedule.windows);
+  initScheduleType(authData.user.schedule.windows);
 
   const profileNameInput = document.getElementById("profileNameInput");
-  profileNameInput.value = authData.name;
-  profileNameInput.addEventListener("change", (event) => {
+  profileNameInput.value = authData.user.name;
+  profileNameInput.addEventListener("input", (event) => {
     onProfileDataChanged({ name: event.target.value });
   });
 }

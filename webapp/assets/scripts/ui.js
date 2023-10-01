@@ -4,7 +4,9 @@ function disableFreeDays(busyDays) {
   for (const weekDayElement of weekDayElements) {
     const date = new Date(weekDayElement.getAttribute("data-date"));
 
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = `${date.getFullYear()}-${`${
+      date.getMonth() + 1
+    }`.padStart(2, "0")}-${`${date.getDate()}`.padStart(2, "0")}`;
     if (!busyDays.includes(dateString)) {
       weekDayElement.classList.add("unavailable");
       weekDayElement.setAttribute("title", "No calls on this day");

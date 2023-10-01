@@ -1,5 +1,4 @@
 async function getEventsForDate(date) {
-  console.log(date);
   const response = await fetch(
     `${API_BASE_URL}/event/get_all?date=${date.toISOString()}`,
     {

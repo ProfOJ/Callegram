@@ -41,19 +41,19 @@ function onScheduleDataChanged(newData) {
   }
 
   if (newData.hasOwnProperty("date")) {
-    scheduleData.appointment_time.setUTCFullYear(
-      newData["date"].getUTCFullYear()
+    scheduleData.appointment_time.setFullYear(
+      newData["date"].getFullYear()
     );
-    scheduleSummary.dateTime.setUTCFullYear(newData["date"].getUTCFullYear());
+    scheduleSummary.dateTime.setFullYear(newData["date"].getFullYear());
 
-    scheduleData.appointment_time.setUTCMonth(newData["date"].getUTCMonth());
-    scheduleSummary.dateTime.setUTCMonth(newData["date"].getUTCMonth());
+    scheduleData.appointment_time.setMonth(newData["date"].getMonth());
+    scheduleSummary.dateTime.setMonth(newData["date"].getMonth());
 
-    scheduleData.appointment_time.setUTCDate(newData["date"].getUTCDate());
-    scheduleSummary.dateTime.setUTCDate(newData["date"].getUTCDate());
+    scheduleData.appointment_time.setDate(newData["date"].getDate());
+    scheduleSummary.dateTime.setDate(newData["date"].getDate());
 
-    scheduleData.appointment_time.setUTCSeconds(0, 0);
-    scheduleSummary.dateTime.setUTCSeconds(0, 0);
+    scheduleData.appointment_time.setSeconds(0, 0);
+    scheduleSummary.dateTime.setSeconds(0, 0);
   }
 
   if (newData.hasOwnProperty("duration")) {

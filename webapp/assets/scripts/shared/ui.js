@@ -66,7 +66,7 @@ function populateDays() {
     const date = new Date(today);
     date.setDate(date.getDate() + i);
     weekDayDate.innerText = date.getDate();
-    weekDayDate.setAttribute("data-date", date.toISOString());
+    weekDayDate.setAttribute("data-date", date.toString());
   }
 }
 

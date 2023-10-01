@@ -20,7 +20,8 @@ const shareScheduleCallback = () => {
 function wasProfileDataChanged() {
   return !(
     profileData.name === initialProfileData.name &&
-    profileData.schedule_days.toString() === initialProfileData.scheduleDays.toString() &&
+    profileData.schedule_days.toString() ===
+      initialProfileData.scheduleDays.toString() &&
     profileData.schedule_type === initialProfileData.scheduleType
   );
 }
@@ -41,10 +42,11 @@ async function onDayClicked(event) {
   weekDayElement.classList.add("selected");
 
   const date = new Date(weekDayElement.getAttribute("data-date"));
-  date.setUTCHours(0, 0, 0, 0);
-
+  const dateUTC = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0)
+  );
   blockSection(2);
-  const events = await getEventsForDate(date);
+  const events = await getEventsForDate(dateUTC);
   if (!events) {
     return;
   }
@@ -91,7 +93,6 @@ async function onEventClicked(event) {
 }
 
 function onProfileDataChanged(newData) {
-  console.log(newData);
   if (newData.hasOwnProperty("name")) {
     profileData.name = newData["name"];
   }

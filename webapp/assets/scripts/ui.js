@@ -271,6 +271,10 @@ function initScheduleType(windows) {
     return day[0] !== 0 || day[1] !== 0;
   });
 
+  if (!firstAvailableDay) {
+    return;
+  }
+
   const firstAvailableHour = firstAvailableDay[0];
   const timezoneOffset = new Date().getTimezoneOffset();
   const localHour = (firstAvailableHour - timezoneOffset) / 60;

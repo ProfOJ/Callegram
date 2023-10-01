@@ -37,7 +37,7 @@ class TelegramBotService:
 
     async def send_invited_call_booked_notification(self, booking_details: CalendarEvent):
         local_datetime = booking_details.appointment_time.astimezone(
-            timezone(timedelta(minutes=booking_details.owner_user.timezone * -1))
+            timezone(timedelta(minutes=booking_details.invited_user.timezone * -1))
         )
         await self.bot.send_message(
             booking_details.invited_user_id,

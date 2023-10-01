@@ -114,6 +114,8 @@ async function main() {
     return;
   }
 
+  Telegram.WebApp.expand();
+
   initTabs();
   populateDays();
 

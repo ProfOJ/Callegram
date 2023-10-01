@@ -44,6 +44,8 @@ async function main() {
     return;
   }
 
+  Telegram.WebApp.expand();
+
   Telegram.WebApp.BackButton.show();
   Telegram.WebApp.BackButton.onClick(() => {
     Telegram.WebApp.BackButton.hide();

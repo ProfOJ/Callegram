@@ -162,6 +162,8 @@ async function main() {
     return;
   }
 
+  Telegram.WebApp.expand();
+
   Telegram.WebApp.enableClosingConfirmation();
   Telegram.WebApp.BackButton.onClick(() => {
     Telegram.WebApp.disableClosingConfirmation();

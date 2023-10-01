@@ -159,6 +159,8 @@ async function main() {
     return;
   }
 
+  Telegram.WebApp.expand();
+
   const initData = getInitData();
   const ownerUserId = initData.start_param.split("_")[1];
   const ownerInfo = await getOwnerAppointmentInfo(ownerUserId);

@@ -84,7 +84,7 @@ async function onScheduleConfirmed() {
   });
   Telegram.WebApp.showPopup({
     title: "Call scheduled!",
-    message: "You will be notified in 30 and 15 minutes before the call",
+    message: "You will be notified in 20 and 10 minutes before the call",
     buttons: [
       {
         id: "ok",

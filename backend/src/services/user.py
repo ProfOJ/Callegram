@@ -50,7 +50,7 @@ class UserService:
             })
             await uow.schedules.add_one({
                 'user_id': user_id,
-                'windows': self.get_windows('default', list(range(5)))
+                'windows': self.get_windows('default', list(range(5)), user.timezone)
             })
             await uow.commit()
             return user_id

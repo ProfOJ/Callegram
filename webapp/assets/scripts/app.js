@@ -156,8 +156,11 @@ async function main() {
       firstBusyDate.getDate()
     )
   );
-  const events = await getEventsForDate(firstBusyDateUTC);
 
-  populateEvents(events);
+  if (firstBusyDate) {
+    const events = await getEventsForDate(firstBusyDateUTC);
+    populateEvents(events);
+  }
+
   showSection(2);
 }

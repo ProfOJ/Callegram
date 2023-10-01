@@ -105,7 +105,10 @@ async function onDayClicked(event) {
   const selectedDate = new Date(element.getAttribute("data-date"));
   blockSection(2);
   blockSection(3);
-  const availability = await getDayAvailability(selectedDate, scheduleData.owner_user_id);
+  const availability = await getDayAvailability(
+    selectedDate,
+    scheduleData.owner_user_id
+  );
   unblockSection(2);
   unblockSection(3);
 

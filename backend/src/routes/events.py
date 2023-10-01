@@ -4,11 +4,12 @@ from datetime import timedelta
 from fastapi import APIRouter
 from fastapi import Depends
 
-from dependencies import auth_service, UOWDep
+from dependencies import auth_service, UOWDep, get_notification_service
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate, ApiResponse
 from models.view import CalendarEvent, User
 from services.auth import AuthService
 from services.event import CalendarEventService
+from services.nitification import TelegramNotificationService
 from services.user import UserService
 
 router = APIRouter()
@@ -92,6 +93,7 @@ async def schedule_appointment(
         appointment: CalendarEventSchemaAdd,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
+        notification_service: TelegramNotificationService = Depends(get_notification_service),
 ) -> ApiResponse:
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
@@ -124,13 +126,16 @@ async def schedule_appointment(
             message="Appointment is overlapping with existing appointment",
         )
 
-    event_id = await CalendarEventService.add_event(uow, appointment)
+    event = await CalendarEventService.add_event(uow, appointment)
+
+    await notification_service.send_owner_call_booked_notification(event)
+    await notification_service.send_invited_call_booked_notification(event)
 
     return ApiResponse(
         success=True,
         message="Appointment scheduled",
         data={
-            "event_id": event_id
+            "event": event
         }
     )
 
@@ -157,6 +162,7 @@ async def delete_appointment(
         event_id: str,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
+        notification_service: TelegramNotificationService = Depends(get_notification_service),
 ) -> ApiResponse:
     event = await CalendarEventService.get_event(event_id, uow)
 
@@ -172,7 +178,10 @@ async def delete_appointment(
             message="You are not authorized to delete this appointment",
         )
 
-    await CalendarEventService.delete_event(uow, event_id, auth.init_data.user.id)
+    await CalendarEventService.delete_event(uow, event_id)
+
+    await notification_service.send_call_canceled_by_user_notification(auth.init_data.user.id, event)
+    await notification_service.send_call_canceled_of_user_notification(auth.init_data.user.id, event)
 
     return ApiResponse(
         success=True,
@@ -186,6 +195,7 @@ async def edit_appointment(
         appointment: CalendarEventSchemaUpdate,
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
+        notification_service: TelegramNotificationService = Depends(get_notification_service),
 ) -> ApiResponse:
     event: CalendarEvent = await CalendarEventService.get_event(event_id, uow)
 
@@ -226,7 +236,10 @@ async def edit_appointment(
             message="Appointment is overlapping with existing appointment",
         )
 
-    await CalendarEventService.edit_event(uow, event_id, appointment, auth.init_data.user.id)
+    event = await CalendarEventService.edit_event(uow, event_id, appointment)
+
+    await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
+    await notification_service.send_call_edited_of_user_notification(auth.init_data.user.id, event)
 
     return ApiResponse(
         success=True,

@@ -2,11 +2,14 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import WEB_APP_HOST
-from routes.user import router as user_router
 from routes.events import router as event_router
 from routes.schedules import router as schedule_router
+from routes.user import router as user_router
+from scheduler.scheduler import scheduler
 
 app = FastAPI()
+
+scheduler.start()
 
 origins = [
     "http://localhost:3000",

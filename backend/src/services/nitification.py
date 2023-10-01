@@ -1,25 +1,18 @@
 from datetime import timezone, timedelta
 
 from aiogram import Bot
-from aiogram.client.session.aiohttp import AiohttpSession
-from aiogram.client.telegram import TelegramAPIServer
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from config import ENVIRONMENT, WEB_APP_HOST
+from config import WEB_APP_HOST
 from models.view import CalendarEvent
 
 
-class TelegramBotService:
-    def __init__(self, token: str, ):
-        environment_path = 'test/' if ENVIRONMENT == "test" else ''
-        session = AiohttpSession(
-            api=TelegramAPIServer(
-                base='https://api.telegram.org/bot{token}/' + environment_path + '{method}',
-                file='https://api.telegram.org/file/bot{token}' + environment_path + '/{path}'
-            )
-        )
+class TelegramNotificationService:
 
-        self.bot = Bot(token=token, session=session)
+    def __init__(self, bot: Bot, scheduler: AsyncIOScheduler):
+        self.bot = bot
+        self.scheduler = scheduler
 
     async def send_owner_call_booked_notification(self, booking_details: CalendarEvent):
         local_datetime = booking_details.appointment_time.astimezone(

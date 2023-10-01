@@ -51,8 +51,8 @@ class CalendarEventService:
     async def delete_event(uow: AbstractUnitOfWork, event_id: str, deleted_by_user_id: int):
         async with uow:
             event = await CalendarEventService.get_event(event_id, uow)
-            await uow.commit()
             event_id = await uow.calendar_events.delete_one(event_id)
+            await uow.commit()
             telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
             await telegram_bot_service.send_call_canceled_by_user_notification(deleted_by_user_id, event)
             await telegram_bot_service.send_call_canceled_of_user_notification(deleted_by_user_id, event)

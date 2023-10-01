@@ -40,8 +40,8 @@ class TelegramBotService:
             timezone(timedelta(minutes=booking_details.owner_user.timezone * -1))
         )
         await self.bot.send_message(
-            booking_details.owner_user_id,
-            f"You have booked a call with [{booking_details.invited_user.name}](tg://user?id={booking_details.invited_user_id})" +
+            booking_details.invited_user_id,
+            f"You have booked a call with [{booking_details.owner_user.name}](tg://user?id={booking_details.owner_user_id})" +
             f" at {local_datetime.strftime('%d/%m/%y %H:%M')}.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="View booking", web_app=WebAppInfo(

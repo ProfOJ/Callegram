@@ -47,7 +47,7 @@ async function onDayClicked(event) {
     populateEvents(events);
     setTimeout(() => {
       showSection(2);
-    }, 300);
+    }, 150);
   }, 150);
 }
 

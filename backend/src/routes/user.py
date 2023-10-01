@@ -19,7 +19,7 @@ async def user_auth(
     user = await UserService.get_user(uow, auth.init_data.user.id)
 
     if not user:
-        await UserService.register_user(uow, User(
+        await UserService().register_user(uow, User(
             id=auth.init_data.user.id,
             name=auth.init_data.user.first_name,
             timezone=user_auth_data.timezone,
@@ -27,9 +27,6 @@ async def user_auth(
             schedule=None
         ))
         user = await UserService.get_user(uow, auth.init_data.user.id)
-        schedule = await ScheduleService.find_one_by_user_id(uow, auth.init_data.user.id)
-    else:
-        schedule = user.schedule
 
     return ApiResponse(
         success=True,
@@ -40,7 +37,7 @@ async def user_auth(
                 name=user.name,
                 timezone=user.timezone,
                 notification_time=user.notification_time,
-                schedule=schedule
+                schedule=user.schedule
             )
         }
     )

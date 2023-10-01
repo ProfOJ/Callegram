@@ -14,6 +14,14 @@ a {
     color: var(--tg-theme-link-color);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 #viewport {
     position: fixed;
     left: 0;

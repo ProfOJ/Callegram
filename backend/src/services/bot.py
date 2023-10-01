@@ -5,12 +5,13 @@ from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 
+from config import ENVIRONMENT, WEB_APP_HOST
 from models.view import CalendarEvent
 
 
 class TelegramBotService:
-    def __init__(self, token: str, test_server=False):
-        environment_path = 'test/' if test_server else ''
+    def __init__(self, token: str, ):
+        environment_path = 'test/' if ENVIRONMENT == "test" else ''
         session = AiohttpSession(
             api=TelegramAPIServer(
                 base='https://api.telegram.org/bot{token}/' + environment_path + '{method}',
@@ -30,7 +31,7 @@ class TelegramBotService:
             f" has booked a call with you at {local_datetime.strftime('%d/%m/%y %H:%M')}.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
-                    url=f"http://127.0.0.1:3000/eventDetails?eventId={booking_details.id}"))
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
             ]]),
             parse_mode="Markdown"
         )
@@ -45,7 +46,7 @@ class TelegramBotService:
             f" at {local_datetime.strftime('%d/%m/%y %H:%M')}.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
-                    url=f"http://127.0.0.1:3000/eventDetails?eventId={booking_details.id}"))
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
             ]]),
             parse_mode="Markdown"
         )
@@ -89,7 +90,7 @@ class TelegramBotService:
             f"{local_datetime.strftime('%d/%m/%y %H:%M')}.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="View updated booking", web_app=WebAppInfo(
-                    url=f"http://127.0.0.1:3000/eventDetails?eventId={booking_details.id}"))
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
             ]]),
             parse_mode="Markdown"
         )
@@ -106,7 +107,7 @@ class TelegramBotService:
             f"{local_datetime.strftime('%d/%m/%y %H:%M')}.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(text="View updated booking", web_app=WebAppInfo(
-                    url=f"http://127.0.0.1:3000/eventDetails?eventId={booking_details.id}"))
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
             ]]),
             parse_mode="Markdown"
         )

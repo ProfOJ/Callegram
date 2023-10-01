@@ -14,3 +14,7 @@ REDIS_HOST = os.environ.get('API_REDIS_HOST')
 REDIS_PORT = os.environ.get('API_REDIS_PORT')
 
 BOT_TOKEN = os.environ.get('BOT_TOKEN')
+
+WEB_APP_HOST = os.environ.get('WEB_APP_HOST')
+
+ENVIRONMENT = os.environ.get('ENVIRONMENT')

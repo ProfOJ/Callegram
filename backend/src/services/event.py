@@ -42,7 +42,7 @@ class CalendarEventService:
             })
             await uow.commit()
             event = await CalendarEventService.get_event(event_id, uow)
-            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN)
             await telegram_bot_service.send_owner_call_booked_notification(event)
             await telegram_bot_service.send_invited_call_booked_notification(event)
             return event_id
@@ -53,7 +53,7 @@ class CalendarEventService:
             event = await CalendarEventService.get_event(event_id, uow)
             event_id = await uow.calendar_events.delete_one(event_id)
             await uow.commit()
-            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN)
             await telegram_bot_service.send_call_canceled_by_user_notification(deleted_by_user_id, event)
             await telegram_bot_service.send_call_canceled_of_user_notification(deleted_by_user_id, event)
             return event_id
@@ -68,7 +68,7 @@ class CalendarEventService:
             })
             await uow.commit()
             event = await CalendarEventService.get_event(event_id, uow)
-            telegram_bot_service = TelegramBotService(BOT_TOKEN, test_server=True)
+            telegram_bot_service = TelegramBotService(BOT_TOKEN)
             await telegram_bot_service.send_call_edited_by_user_notification(edited_by_user_id, event)
             await telegram_bot_service.send_call_edited_of_user_notification(edited_by_user_id, event)
             return event

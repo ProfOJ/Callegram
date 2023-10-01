@@ -9,7 +9,7 @@ from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate, Api
 from models.view import CalendarEvent, User
 from services.auth import AuthService
 from services.event import CalendarEventService
-from services.nitification import TelegramNotificationService
+from services.notification import TelegramNotificationService
 from services.user import UserService
 
 router = APIRouter()
@@ -95,6 +95,7 @@ async def schedule_appointment(
         auth: AuthService = Depends(auth_service),
         notification_service: TelegramNotificationService = Depends(get_notification_service),
 ) -> ApiResponse:
+    print(appointment.appointment_time)
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,

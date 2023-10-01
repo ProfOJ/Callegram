@@ -129,7 +129,6 @@ async function onDayClicked(event) {
     return;
   }
 
-  console.log(populateTimeSlots);
   const [
     selectedHour, // first available hour
     selectedMinute, // first available minute

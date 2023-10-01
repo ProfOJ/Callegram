@@ -95,7 +95,6 @@ async def schedule_appointment(
         auth: AuthService = Depends(auth_service),
         notification_service: TelegramNotificationService = Depends(get_notification_service),
 ) -> ApiResponse:
-    print(appointment.appointment_time)
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
@@ -222,7 +221,7 @@ async def edit_appointment(
 
     appointment.duration = timedelta(minutes=30)  # default duration is 30 minutes
 
-    if not is_event_inside_schedule(event, user):
+    if not is_event_inside_schedule(appointment, user):
         return ApiResponse(
             success=False,
             message="Appointment is not inside the schedule",

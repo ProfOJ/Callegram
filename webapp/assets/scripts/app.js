@@ -27,6 +27,13 @@ function wasProfileDataChanged() {
 
 async function onDayClicked(event) {
   const weekDayElement = event.target;
+
+  if (weekDayElement.classList.contains("unavailable")) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("warning");
+    Telegram.WebApp.showAlert("There are no calls on this day.");
+    return;
+  }
+
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
     day.classList.remove("selected");

@@ -189,6 +189,7 @@ function initTabs() {
   const tabs = document.getElementsByClassName("tab");
   for (const tab of tabs) {
     tab.addEventListener("click", () => {
+      Telegram.WebApp.HapticFeedback.selectionChanged();
       switchTab(tab);
     });
   }
@@ -198,11 +199,9 @@ function initWeekDays() {
   const weekDayElements = document.getElementsByClassName("weekDay");
   let checkedFirstBusyDay = false;
   for (const weekDayElement of weekDayElements) {
-    if (weekDayElement.classList.contains("unavailable")) {
-      continue;
-    }
+    const dayUnavailable = weekDayElement.classList.contains("unavailable");
 
-    if (!checkedFirstBusyDay) {
+    if (!checkedFirstBusyDay && !dayUnavailable) {
       weekDayElement.classList.add("selected");
       checkedFirstBusyDay = true;
     }
@@ -241,6 +240,7 @@ function refreshProfileDayAvailability(windows) {
   for (let dayIndex = 0; dayIndex < weekDayElements.length; dayIndex++) {
     const weekDayElement = weekDayElements[dayIndex];
     weekDayElement.onclick = () => {
+      Telegram.WebApp.HapticFeedback.selectionChanged();
       const oldScheduleDays = [...profileData.schedule_days];
 
       if (weekDayElement.classList.contains("unavailable")) {
@@ -283,7 +283,7 @@ function initScheduleType(windows) {
     case 7:
       initialProfileData.scheduleType = "early";
       profileData.schedule_type = "early";
-      selectScheduleType("early");
+      selectScheduleType("early", false);
       break;
 
     case 9:
@@ -295,7 +295,7 @@ function initScheduleType(windows) {
     case 12:
       initialProfileData.scheduleType = "late";
       profileData.schedule_type = "late";
-      selectScheduleType("late");
+      selectScheduleType("late", false);
       break;
 
     default:
@@ -303,7 +303,7 @@ function initScheduleType(windows) {
   }
 }
 
-function selectScheduleType(scheduleType) {
+function selectScheduleType(scheduleType, haptic = true) {
   // type "early" starts from 7:00 and ends at 16:00
   // type "default" starts from 9:00 and ends at 18:00
   // type "late" starts from 12:00 and ends at 21:00
@@ -324,6 +324,11 @@ function selectScheduleType(scheduleType) {
 
   switch (scheduleType) {
     case "early":
+      if (haptic) {
+        setTimeout(() => {
+          Telegram.WebApp.HapticFeedback.impactOccurred("medium");
+        }, 300);
+      }
       timeFrameTimes.innerText = "From 7:00 to 16:00";
       break;
 
@@ -332,6 +337,11 @@ function selectScheduleType(scheduleType) {
       break;
 
     case "late":
+      if (haptic) {
+        setTimeout(() => {
+          Telegram.WebApp.HapticFeedback.impactOccurred("medium");
+        }, 300);
+      }
       timeFrameTimes.innerText = "From 12:00 to 21:00";
       break;
 

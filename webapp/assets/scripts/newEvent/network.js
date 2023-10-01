@@ -1,6 +1,6 @@
 
 async function createEvent(event) {
-    const response = await fetch("http://localhost:5000/event/create", {
+    const response = await fetch(`${API_BASE_URL}/event/create`, {
       headers: getCommonHeaders(),
       mode: "cors",
       method: "POST",

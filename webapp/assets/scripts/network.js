@@ -1,6 +1,6 @@
 async function getEventsForDate(date) {
   const response = await fetch(
-    `http://localhost:5000/event/get_all?date=${date.toISOString()}`,
+    `${API_BASE_URL}/event/get_all?date=${date.toISOString()}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",
@@ -23,7 +23,7 @@ async function getEventsForDate(date) {
 
 async function getBusyDays(from, to) {
   const response = await fetch(
-    `http://localhost:5000/schedule/busy_days?from_date=${from.toISOString()}&to_date=${to.toISOString()}`,
+    `${API_BASE_URL}/schedule/busy_days?from_date=${from.toISOString()}&to_date=${to.toISOString()}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",
@@ -45,7 +45,7 @@ async function getBusyDays(from, to) {
 }
 
 async function updateUserProfile(userId, profileData) {
-  const response = await fetch(`http://localhost:5000/user/update/${userId}`, {
+  const response = await fetch(`${API_BASE_URL}/user/update/${userId}`, {
     headers: getCommonHeaders(),
     mode: "cors",
     method: "POST",

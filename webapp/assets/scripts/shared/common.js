@@ -1,3 +1,5 @@
+API_BASE_URL = "http://localhost:5000";
+
 function getCommonHeaders() {
   return {
     Authorization: btoa(Telegram.WebApp.initData),
@@ -6,7 +8,7 @@ function getCommonHeaders() {
 }
 
 async function authUser() {
-  const response = await fetch("http://127.0.0.1:5000/user/auth", {
+  const response = await fetch(`${API_BASE_URL}/user/auth`, {
     headers: getCommonHeaders(),
     mode: "cors",
     method: "POST",

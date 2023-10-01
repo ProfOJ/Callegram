@@ -1,5 +1,5 @@
 async function getEventDetails(eventId) {
-  const response = await fetch(`http://localhost:5000/event/get/${eventId}`, {
+  const response = await fetch(`${API_BASE_URL}/event/get/${eventId}`, {
     headers: getCommonHeaders(),
     mode: "cors",
   });
@@ -19,7 +19,7 @@ async function getEventDetails(eventId) {
 }
 
 async function editEvent(eventId, event) {
-  const response = await fetch(`http://localhost:5000/event/edit/${eventId}`, {
+  const response = await fetch(`${API_BASE_URL}/event/edit/${eventId}`, {
     headers: getCommonHeaders(),
     mode: "cors",
     method: "PATCH",

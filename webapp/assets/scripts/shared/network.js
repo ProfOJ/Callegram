@@ -1,6 +1,6 @@
 async function getOwnerAppointmentInfo(ownerUserId) {
   const response = await fetch(
-    `http://localhost:5000/user/info/${ownerUserId}`,
+    `${API_BASE_URL}/user/info/${ownerUserId}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",
@@ -26,7 +26,7 @@ async function getDayAvailability(date, ownerUserId) {
   );
 
   const response = await fetch(
-    `http://localhost:5000/schedule/day_availability/${ownerUserId}?date=${date.toISOString()}`,
+    `${API_BASE_URL}/schedule/day_availability/${ownerUserId}?date=${date.toISOString()}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",
@@ -47,7 +47,7 @@ async function getDayAvailability(date, ownerUserId) {
 }
 
 async function getEventDetails(eventId) {
-  const response = await fetch(`http://localhost:5000/event/get/${eventId}`, {
+  const response = await fetch(`${API_BASE_URL}/event/get/${eventId}`, {
     headers: getCommonHeaders(),
     mode: "cors",
   });

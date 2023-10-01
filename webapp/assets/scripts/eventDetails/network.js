@@ -1,6 +1,6 @@
 async function deleteEvent(eventId) {
   const response = await fetch(
-    `http://localhost:5000/event/delete/${eventId}`,
+    `${API_BASE_URL}/event/delete/${eventId}`,
     {
       headers: getCommonHeaders(),
       mode: "cors",

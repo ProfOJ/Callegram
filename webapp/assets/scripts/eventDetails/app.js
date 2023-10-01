@@ -65,8 +65,8 @@ async function main() {
   if (event.owner_user_id === userId) {
     const eventActions = document.getElementById("eventActions");
     eventActions.style.display = "none";
-    Telegram.WebApp.MainButton.show();
     Telegram.WebApp.MainButton.setText("Delete");
+    Telegram.WebApp.MainButton.show();
     Telegram.WebApp.MainButton.onClick(() => {
       showConfirmationDialog(() => {
         onDeleteClicked(eventId).then(() => {});

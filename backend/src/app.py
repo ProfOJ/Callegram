@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from config import WEB_APP_HOST
 from routes.user import router as user_router
 from routes.events import router as event_router
 from routes.schedules import router as schedule_router
@@ -10,6 +11,7 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    WEB_APP_HOST
 ]
 
 app.add_middleware(

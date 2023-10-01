@@ -69,7 +69,7 @@ main {
 
 .pageSection {
     font-size: large;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
 }
 
 .pageSection.hidden {
@@ -81,6 +81,21 @@ main {
 .pageSection.blocked:not(.hidden) {
     opacity: 0.5;
     pointer-events: none;
+    animation: blink 1s 0.15s infinite;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0.2;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
 }
 
 .scheduleWeekDays {

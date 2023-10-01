@@ -1,4 +1,4 @@
-from aiogram import Bot
+from aiogram import Bot, Router
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.client.telegram import TelegramAPIServer
 

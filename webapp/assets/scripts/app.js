@@ -61,7 +61,7 @@ async function onDayClicked(event) {
 }
 
 function onScheduleShareClick() {
-  Telegram.WebApp.openTelegramLink("https://t.me/");
+  Telegram.WebApp.switchInlineQuery("", ["users"]);
 }
 
 async function onSaveDataClick() {

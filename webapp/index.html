@@ -46,7 +46,7 @@
       setTimeout(() => {
         callsAnimation = bodymovin.loadAnimation({
           container: document.getElementById("tabIconCalls"),
-          path: "assets/animations/clock.json",
+          path: `assets/animations/clock.json?${Date.now()}`,
           renderer: "svg",
           loop: false,
           autoplay: true,
@@ -55,7 +55,7 @@
 
         profileAnimation = bodymovin.loadAnimation({
           container: document.getElementById("tabIconProfile"),
-          path: "assets/animations/people.json",
+          path: `assets/animations/people.json?${Date.now()}`,
           renderer: "svg",
           loop: false,
           autoplay: false,
@@ -64,7 +64,7 @@
 
         const yawnAnimation = bodymovin.loadAnimation({
           container: document.getElementById("earlyScheduleIcon"),
-          path: "assets/animations/yawn.json",
+          path: `assets/animations/yawn.json?${Date.now()}`,
           renderer: "svg",
           loop: true,
           autoplay: true,
@@ -73,7 +73,7 @@
 
         const smileAnimation = bodymovin.loadAnimation({
           container: document.getElementById("defaultScheduleIcon"),
-          path: "assets/animations/smile.json",
+          path: `assets/animations/smile.json?${Date.now()}`,
           renderer: "svg",
           loop: true,
           autoplay: true,
@@ -82,7 +82,7 @@
 
         const sleepAnimation = bodymovin.loadAnimation({
           container: document.getElementById("lateScheduleIcon"),
-          path: "assets/animations/sleep.json",
+          path: `assets/animations/sleep.json?${Date.now()}`,
           renderer: "svg",
           loop: true,
           autoplay: true,

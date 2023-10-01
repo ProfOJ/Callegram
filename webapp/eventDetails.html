@@ -43,7 +43,7 @@
       setTimeout(() => {
         const phoneIconAnimation = bodymovin.loadAnimation({
           container: document.getElementById("headerAnimation"),
-          path: "assets/animations/duck_calendar.json",
+          path: `assets/animations/duck_calendar.json?${Date.now()}`,
           renderer: "svg",
           loop: true,
           autoplay: true,

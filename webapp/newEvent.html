@@ -44,7 +44,7 @@
       setTimeout(() => {
         const phoneIconAnimation = bodymovin.loadAnimation({
         container: document.getElementById('phoneIcon'),
-        path: 'assets/animations/phone.json',
+        path: `assets/animations/phone.json?${Date.now()}`,
         renderer: 'svg',
         loop: true,
         autoplay: true,

@@ -73,7 +73,7 @@ async function onEditConfirmed() {
 
   const response = await editEvent(calendarEvent.id, scheduleData);
 
-  if (!response.success) {
+  if (!response) {
     return;
   }
 

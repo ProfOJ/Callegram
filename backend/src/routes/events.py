@@ -289,15 +289,24 @@ async def edit_appointment(
     await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
     await notification_service.send_call_edited_of_user_notification(auth.init_data.user.id, event)
 
-    scheduler.reschedule_job(
-        f"{event.id}_20min", trigger='date', run_date=event.appointment_time - timedelta(minutes=20)
-    )
-    scheduler.reschedule_job(
-        f"{event.id}_10min", trigger='date', run_date=event.appointment_time - timedelta(minutes=10)
-    )
-    scheduler.reschedule_job(
-        f"{event.id}_call_start", trigger='date', run_date=event.appointment_time
-    )
+    try:
+        scheduler.reschedule_job(
+            f"{event.id}_20min", trigger='date', run_date=event.appointment_time - timedelta(minutes=20)
+        )
+    except JobLookupError:  # we don't care about this error
+        pass
+    try:
+        scheduler.reschedule_job(
+            f"{event.id}_10min", trigger='date', run_date=event.appointment_time - timedelta(minutes=10)
+        )
+    except JobLookupError:  # we don't care about this error
+        pass
+    try:
+        scheduler.reschedule_job(
+            f"{event.id}_call_start", trigger='date', run_date=event.appointment_time
+        )
+    except JobLookupError:  # we don't care about this error
+        pass
 
     return ApiResponse(
         success=True,

@@ -2,7 +2,6 @@ from typing import Annotated
 
 from fastapi import Depends
 
-from bot.bot import bot
 from config import BOT_TOKEN
 from scheduler.scheduler import scheduler
 from services.auth import AuthService

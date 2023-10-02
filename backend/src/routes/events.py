@@ -1,16 +1,19 @@
 import datetime
 from datetime import timedelta
 
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import APIRouter
 from fastapi import Depends
 
-from dependencies import auth_service, UOWDep, get_notification_service
+from dependencies import auth_service, UOWDep, get_notification_service, get_scheduler
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate, ApiResponse
 from models.view import CalendarEvent, User
 from services.auth import AuthService
 from services.event import CalendarEventService
-from services.notification import TelegramNotificationService
+from services.notification import TelegramNotificationService, send_call_reminder_notification, \
+    send_call_started_notification
 from services.user import UserService
+from apscheduler.schedulers.base import JobLookupError
 
 router = APIRouter()
 
@@ -94,6 +97,7 @@ async def schedule_appointment(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
         notification_service: TelegramNotificationService = Depends(get_notification_service),
+        scheduler: AsyncIOScheduler = Depends(get_scheduler),
 ) -> ApiResponse:
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
@@ -131,6 +135,33 @@ async def schedule_appointment(
     await notification_service.send_owner_call_booked_notification(event)
     await notification_service.send_invited_call_booked_notification(event)
 
+    min20_notification_time = event.appointment_time - timedelta(minutes=20)
+    min10_notification_time = event.appointment_time - timedelta(minutes=10)
+
+    scheduler.add_job(
+        send_call_reminder_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+            'minutes_before_start': 20,
+        },
+        id=f"{event.id}_20min", run_date=min20_notification_time
+    )
+    scheduler.add_job(
+        send_call_reminder_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+            'minutes_before_start': 10,
+        },
+        id=f"{event.id}_10min", run_date=min10_notification_time
+    )
+    scheduler.add_job(
+        send_call_started_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+        },
+        id=f"{event.id}_call_start", run_date=event.appointment_time
+    )
+
     return ApiResponse(
         success=True,
         message="Appointment scheduled",
@@ -163,6 +194,7 @@ async def delete_appointment(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
         notification_service: TelegramNotificationService = Depends(get_notification_service),
+        scheduler: AsyncIOScheduler = Depends(get_scheduler),
 ) -> ApiResponse:
     event = await CalendarEventService.get_event(event_id, uow)
 
@@ -183,6 +215,21 @@ async def delete_appointment(
     await notification_service.send_call_canceled_by_user_notification(auth.init_data.user.id, event)
     await notification_service.send_call_canceled_of_user_notification(auth.init_data.user.id, event)
 
+    try:
+        scheduler.remove_job(f"{event.id}_20min")
+    except JobLookupError:  # we don't care about this error
+        pass
+
+    try:
+        scheduler.remove_job(f"{event.id}_10min")
+    except JobLookupError:  # we don't care about this error
+        pass
+
+    try:
+        scheduler.remove_job(f"{event.id}_call_start")
+    except JobLookupError:  # we don't care about this error
+        pass
+
     return ApiResponse(
         success=True,
         message="Appointment deleted",
@@ -196,6 +243,7 @@ async def edit_appointment(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
         notification_service: TelegramNotificationService = Depends(get_notification_service),
+        scheduler: AsyncIOScheduler = Depends(get_scheduler),
 ) -> ApiResponse:
     event: CalendarEvent = await CalendarEventService.get_event(event_id, uow)
 
@@ -240,6 +288,16 @@ async def edit_appointment(
 
     await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
     await notification_service.send_call_edited_of_user_notification(auth.init_data.user.id, event)
+
+    scheduler.reschedule_job(
+        f"{event.id}_20min", trigger='date', run_date=event.appointment_time - timedelta(minutes=20)
+    )
+    scheduler.reschedule_job(
+        f"{event.id}_10min", trigger='date', run_date=event.appointment_time - timedelta(minutes=10)
+    )
+    scheduler.reschedule_job(
+        f"{event.id}_call_start", trigger='date', run_date=event.appointment_time
+    )
 
     return ApiResponse(
         success=True,

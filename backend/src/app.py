@@ -6,7 +6,7 @@ from aiogram.types import InlineQuery, InputTextMessageContent, InlineKeyboardMa
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from bot.bot import bot
+from bot.bot import get_bot_instance
 from config import WEB_APP_HOST
 from routes.events import router as event_router
 from routes.schedules import router as schedule_router
@@ -16,6 +16,8 @@ from scheduler.scheduler import scheduler
 app: FastAPI = FastAPI()
 
 bot_dispatcher = Dispatcher()
+
+bot = get_bot_instance()
 
 
 @bot_dispatcher.inline_query()

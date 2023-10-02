@@ -15,4 +15,8 @@ UOWDep = Annotated[AbstractUnitOfWork, Depends(UnitOfWork)]
 
 
 def get_notification_service():
-    return TelegramNotificationService(bot, scheduler)
+    return TelegramNotificationService(bot)
+
+
+def get_scheduler():
+    return scheduler

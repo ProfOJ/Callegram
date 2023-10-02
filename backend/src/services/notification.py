@@ -1,18 +1,19 @@
+import asyncio
 from datetime import timezone, timedelta
 
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
+from bot.bot import get_bot_instance
 from config import WEB_APP_HOST
 from models.view import CalendarEvent
 
 
 class TelegramNotificationService:
 
-    def __init__(self, bot: Bot, scheduler: AsyncIOScheduler):
+    def __init__(self, bot: Bot):
         self.bot = bot
-        self.scheduler = scheduler
 
     async def send_owner_call_booked_notification(self, booking_details: CalendarEvent):
         local_datetime = booking_details.appointment_time.astimezone(
@@ -105,8 +106,14 @@ class TelegramNotificationService:
             parse_mode="Markdown"
         )
 
-    async def send_call_reminder_notification(self, minutes_before_start: int, booking_details: CalendarEvent):
-        await self.bot.send_message(
+
+def send_call_reminder_notification(**kwargs):
+    bot = get_bot_instance()
+    booking_details: CalendarEvent = kwargs.get("booking_details")
+    minutes_before_start: int = kwargs.get("minutes_before_start")
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(
+        bot.send_message(
             booking_details.owner_user_id,
             f"Your call with [{booking_details.invited_user.name}](tg://user?id={booking_details.invited_user_id}) "
             f"will start in {minutes_before_start} minutes.",
@@ -116,7 +123,9 @@ class TelegramNotificationService:
             ]]),
             parse_mode="Markdown"
         )
-        await self.bot.send_message(
+    )
+    loop.run_until_complete(
+        bot.send_message(
             booking_details.invited_user_id,
             f"Your call with [{booking_details.owner_user.name}](tg://user?id={booking_details.owner_user_id}) "
             f"will start in {minutes_before_start} minutes.",
@@ -126,3 +135,34 @@ class TelegramNotificationService:
             ]]),
             parse_mode="Markdown"
         )
+    )
+
+
+def send_call_started_notification(**kwargs):
+    bot = get_bot_instance()
+    booking_details: CalendarEvent = kwargs.get("booking_details")
+    loop = asyncio.new_event_loop()
+    loop.run_until_complete(
+        bot.send_message(
+            booking_details.owner_user_id,
+            f"[{booking_details.invited_user.name}](tg://user?id={booking_details.invited_user_id}) will call you "
+            f"right now. Please wait.",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
+            ]]),
+            parse_mode="Markdown"
+        )
+    )
+    owner_name = f"[{booking_details.owner_user.name}](tg://user?id={booking_details.owner_user_id})"
+    loop.run_until_complete(
+        bot.send_message(
+            booking_details.invited_user_id,
+            f"Please call {owner_name}. {owner_name} is waiting for you right now.",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+                InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
+                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
+            ]]),
+            parse_mode="Markdown"
+        )
+    )

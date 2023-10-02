@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   api_db:
-    image: postgres:15
+    image: postgres:15-bullseye
     container_name: api_db
     restart: always
     command: -p ${API_DB_POSTGRES_PORT}

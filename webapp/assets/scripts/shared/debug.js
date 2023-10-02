@@ -1,9 +1,13 @@
 function viewportChangedEvent() {
-  var sizeEl = document.getElementById("viewport-params-size");
-  sizeEl.innerText = `width: ${window.innerWidth} x height: ${Telegram.WebApp.viewportStableHeight}`;
+  const sizeEl = document.getElementById("viewport-params-size");
+  if (sizeEl) {
+    sizeEl.innerText = `width: ${window.innerWidth} x height: ${Telegram.WebApp.viewportStableHeight}`;
+  }
 
-  var expandEl = document.querySelector("#viewport-params-expand");
-  expandEl.innerText = `Is Expanded: ${Telegram.WebApp.isExpanded}`;
+  const expandEl = document.getElementById("viewport-params-expand");
+  if (expandEl) {
+    expandEl.innerText = `expand: ${Telegram.WebApp.viewportExpand}`;
+  }
 }
 
 function initErudaDebugging() {

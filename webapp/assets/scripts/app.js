@@ -117,12 +117,11 @@ function onProfileDataChanged(newData) {
 }
 
 async function main() {
+  Telegram.WebApp.expand();
   const authData = await authUser();
   if (!authData) {
     return;
   }
-
-  Telegram.WebApp.expand();
 
   initTabs();
   populateDays();

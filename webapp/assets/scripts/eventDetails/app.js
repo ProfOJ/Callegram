@@ -39,12 +39,12 @@ function showConfirmationDialog(confirmationCallback) {
 }
 
 async function main() {
+  Telegram.WebApp.expand();
+
   const authData = await authUser();
   if (!authData) {
     return;
   }
-
-  Telegram.WebApp.expand();
 
   Telegram.WebApp.BackButton.show();
   Telegram.WebApp.BackButton.onClick(() => {

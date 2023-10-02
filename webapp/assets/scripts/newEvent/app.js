@@ -157,12 +157,12 @@ async function onDayClicked(event) {
 }
 
 async function main() {
+  Telegram.WebApp.expand();
+
   const authData = await authUser();
   if (!authData) {
     return;
   }
-
-  Telegram.WebApp.expand();
 
   const initData = getInitData();
   const ownerUserId = initData.start_param.split("_")[1];

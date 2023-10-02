@@ -157,12 +157,12 @@ async function onDayClicked(event) {
 }
 
 async function main() {
+  Telegram.WebApp.expand();
+
   const authData = await authUser();
   if (!authData) {
     return;
   }
-
-  Telegram.WebApp.expand();
 
   Telegram.WebApp.enableClosingConfirmation();
   Telegram.WebApp.BackButton.onClick(() => {

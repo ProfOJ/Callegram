@@ -1,3 +1,12 @@
+function stopLoading() {
+  loadingAnimation.stop();
+  const loading = document.getElementById("loadingAnimation");
+  loading.classList.add("hidden");
+  setTimeout(() => {
+    loading.remove();
+  }, 150);
+}
+
 function showSection(index) {
   const sections = document.getElementsByClassName("pageSection");
 

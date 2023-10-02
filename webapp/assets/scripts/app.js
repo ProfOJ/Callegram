@@ -155,6 +155,7 @@ async function main() {
 
   disableFreeDays(busyDays);
   initWeekDays();
+  stopLoading();
   showSection(1);
 
   const firstBusyDate = new Date(busyDays[0]);

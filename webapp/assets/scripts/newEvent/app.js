@@ -171,6 +171,8 @@ async function main() {
     return;
   }
 
+  stopLoading();
+
   Telegram.WebApp.enableClosingConfirmation();
   onScheduleDataChanged({ name: ownerInfo.name });
 

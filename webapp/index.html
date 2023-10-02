@@ -3,15 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Callegram</title>
+    
+    <script src="assets/scripts/shared/lottie.min.js"></script>
+
     <link rel="stylesheet" href="assets/styles/shared.css" />
     <link rel="stylesheet" href="assets/styles/index.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
+    <link rel="prefetch" href="assets/animations/duck_calendar.json" />
+    <link href="assets/animations/telegram_plane.json" />
 
     <!-- original version -->
     <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
@@ -35,62 +39,17 @@
   </head>
 
   <body>
-    <script async>
+    <script>
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initTelegramApp(debug);
-      main().then(() => {});
-
       let callsAnimation;
       let profileAnimation;
-
-      setTimeout(() => {
-        callsAnimation = bodymovin.loadAnimation({
-          container: document.getElementById("tabIconCalls"),
-          path: `assets/animations/clock.json?${Date.now()}`,
-          renderer: "svg",
-          loop: false,
-          autoplay: true,
-          name: "Calls",
-        });
-
-        profileAnimation = bodymovin.loadAnimation({
-          container: document.getElementById("tabIconProfile"),
-          path: `assets/animations/people.json?${Date.now()}`,
-          renderer: "svg",
-          loop: false,
-          autoplay: false,
-          name: "Profile",
-        });
-
-        const yawnAnimation = bodymovin.loadAnimation({
-          container: document.getElementById("earlyScheduleIcon"),
-          path: `assets/animations/yawn.json?${Date.now()}`,
-          renderer: "svg",
-          loop: true,
-          autoplay: true,
-          name: "Yawn",
-        });
-
-        const smileAnimation = bodymovin.loadAnimation({
-          container: document.getElementById("defaultScheduleIcon"),
-          path: `assets/animations/smile.json?${Date.now()}`,
-          renderer: "svg",
-          loop: true,
-          autoplay: true,
-          name: "Smile",
-        });
-
-        const sleepAnimation = bodymovin.loadAnimation({
-          container: document.getElementById("lateScheduleIcon"),
-          path: `assets/animations/sleep.json?${Date.now()}`,
-          renderer: "svg",
-          loop: true,
-          autoplay: true,
-          name: "Sleep",
-        });
-      }, 0);
+      let loadingAnimation;
+      main().then(() => {});
     </script>
     <main>
+      <div id="loadingAnimation"></div>
+
       <div id="tabBar">
         <div id="tabs">
           <div class="tab" data-tab="calls">
@@ -195,4 +154,63 @@
     <div id="viewport-params-size"></div>
     <div id="viewport-params-expand"></div> -->
   </body>
+  <script>
+    waitFor(() => bodymovin != undefined).then(() => {
+        setTimeout(() => {
+        loadingAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("loadingAnimation"),
+          path: `assets/animations/telegram_plane.json`,
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Loading",
+        });
+        
+        callsAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("tabIconCalls"),
+          path: `assets/animations/clock.json`,
+          renderer: "svg",
+          loop: false,
+          autoplay: true,
+          name: "Calls",
+        });
+
+        profileAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("tabIconProfile"),
+          path: `assets/animations/people.json`,
+          renderer: "svg",
+          loop: false,
+          autoplay: false,
+          name: "Profile",
+        });
+
+        const yawnAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("earlyScheduleIcon"),
+          path: `assets/animations/yawn.json`,
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Yawn",
+        });
+
+        const smileAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("defaultScheduleIcon"),
+          path: `assets/animations/smile.json`,
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Smile",
+        });
+
+        const sleepAnimation = bodymovin.loadAnimation({
+          container: document.getElementById("lateScheduleIcon"),
+          path: `assets/animations/sleep.json`,
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          name: "Sleep",
+        });
+      }, 0);
+    });
+  </script>
 </html>

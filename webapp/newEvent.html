@@ -8,12 +8,13 @@
     />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>New Event</title>
+
+    <script src="assets/scripts/shared/lottie.min.js"></script>
+
     <link rel="stylesheet" href="assets/styles/shared.css" />
     <link rel="stylesheet" href="assets/styles/newEvent.css" />
 
     <link href="assets/animations/phone.json" rel="prefetch" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.4/lottie.min.js"></script>
 
     <!-- original version -->
     <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> -->
@@ -39,21 +40,13 @@
     <script>
       const debug = false; // flip to true and uncomment the debug.js and eruda scripts above to enable debug mode
       initTelegramApp(debug);
+      let loadingAnimation;
       main().then(() => {});
-
-      setTimeout(() => {
-        const phoneIconAnimation = bodymovin.loadAnimation({
-        container: document.getElementById('phoneIcon'),
-        path: `assets/animations/phone.json?${Date.now()}`,
-        renderer: 'svg',
-        loop: true,
-        autoplay: true,
-        name: "Phone",
-      });
-      }, 0);
     </script>
 
     <main>
+      <div id="loadingAnimation"></div>
+
       <div class="pageSection hidden" data-section="1">
         <p>
           <span class="font-bold">1. </span>Pick a date for the call with
@@ -120,9 +113,34 @@
           </div>
         </div>
     </main>
+
+    <!-- <div id="viewport"></div>
+    <div id="viewport-params-size"></div>
+    <div id="viewport-params-expand"></div> -->
   </body>
 
   <script>
     populateDays();
+    waitFor(() => bodymovin != undefined).then(() => {
+        setTimeout(() => {
+          loadingAnimation = bodymovin.loadAnimation({
+            container: document.getElementById("loadingAnimation"),
+            path: `assets/animations/handglass.json`,
+            renderer: "svg",
+            loop: true,
+            autoplay: true,
+            name: "Loading",
+          });
+
+          const phoneIconAnimation = bodymovin.loadAnimation({
+          container: document.getElementById('phoneIcon'),
+          path: `assets/animations/phone.json`,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          name: "Phone",
+        });
+        }, 0);
+      });
   </script>
 </html>

@@ -213,6 +213,8 @@ async function main() {
     duration: calendarEvent.duration,
   });
 
+  stopLoading();
+
   showSection(1);
   setTimeout(() => {
     showSection(2);

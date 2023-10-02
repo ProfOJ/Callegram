@@ -52,6 +52,7 @@ main>button {
 
 #eventActions>button {
     width: 100%;
+    height: 50px;
     background-color: var(--tg-theme-button-color);
     color: var(--tg-theme-button-text-color);
     border-radius: 5px;
@@ -60,6 +61,7 @@ main>button {
     transition: all 0.2s ease;
     outline: none;
     border: none;
+    font-size: large;
     font-weight: bolder;
 }
 

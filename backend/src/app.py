@@ -32,7 +32,7 @@ async def inline_query_handler(inline_query: InlineQuery):
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(
                     text="Book a call",
-                    url=f"t.me/CommunityBot/book?startapp=user_{inline_query.from_user.id}"
+                    url=f"t.me/CallegramBot/book?startapp=user_{inline_query.from_user.id}"
                 )
             ]]),
         )

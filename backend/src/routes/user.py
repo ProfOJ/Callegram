@@ -4,7 +4,6 @@ from dependencies import UOWDep, auth_service
 from models.schema import UserSchemaAuth, ApiResponse, UserSchemaProfileUpdate
 from models.view import User
 from services.auth import AuthService
-from services.schedule import ScheduleService
 from services.user import UserService
 
 router = APIRouter()

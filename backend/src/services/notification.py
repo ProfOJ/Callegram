@@ -148,8 +148,10 @@ def send_call_started_notification(**kwargs):
             f"[{booking_details.invited_user.name}](tg://user?id={booking_details.invited_user_id}) will call you "
             f"right now. Please wait.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
-                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
+                InlineKeyboardButton(
+                    text="Go to chat",
+                    url=f"tg://user?id={booking_details.invited_user_id}"
+                )
             ]]),
             parse_mode="Markdown"
         )
@@ -160,8 +162,10 @@ def send_call_started_notification(**kwargs):
             booking_details.invited_user_id,
             f"Please call {owner_name}. {owner_name} is waiting for you right now.",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
-                InlineKeyboardButton(text="View booking", web_app=WebAppInfo(
-                    url=f"{WEB_APP_HOST}/eventDetails?eventId={booking_details.id}"))
+                InlineKeyboardButton(
+                    text="Call this user",
+                    url=f"tg://user?id={booking_details.owner_user_id}"
+                )
             ]]),
             parse_mode="Markdown"
         )

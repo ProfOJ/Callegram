@@ -1,2 +1,5 @@
-FROM nginx:alpine
-COPY . /usr/share/nginx/html
+FROM node:18-alpine
+WORKDIR /app
+COPY . /app/
+RUN npm install -g serve
+CMD [ "npx", "serve", "-p", "80" ]

@@ -70,6 +70,9 @@ async function onSaveDataClick() {
     return;
   }
 
+  const profileNameInput = document.getElementById("profileNameInput");
+  profileNameInput.blur();
+
   Telegram.WebApp.MainButton.showProgress();
   const userId = await getUser().id;
 

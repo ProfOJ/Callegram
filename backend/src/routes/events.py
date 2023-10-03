@@ -73,18 +73,18 @@ async def get_appointment(
     if not event:
         return ApiResponse(
             success=False,
-            message="Appointment not found",
+            message="Event not found",
         )
 
     if event.owner_user_id != auth.init_data.user.id and event.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
-            message="You are not authorized to get this appointment",
+            message="You are not authorized to get this event",
         )
 
     return ApiResponse(
         success=True,
-        message="Appointment retrieved",
+        message="Event retrieved",
         data={
             "event": event
         }
@@ -102,7 +102,7 @@ async def schedule_appointment(
     if appointment.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
-            message="You are not authorized to create this appointment",
+            message="You are not authorized to create this event",
         )
 
     user = await UserService.get_user(uow, appointment.owner_user_id)
@@ -118,16 +118,16 @@ async def schedule_appointment(
     if not is_event_inside_schedule(appointment, user):
         return ApiResponse(
             success=False,
-            message="Appointment is not inside the schedule",
+            message="Event is not inside the user's schedule",
         )
 
-    events = await CalendarEventService.get_events(appointment.owner_user_id, uow)
-    events += await CalendarEventService.get_events(appointment.invited_user_id, uow)
+    events = await CalendarEventService.get_events_by_user_id(appointment.owner_user_id, uow)
+    events += await CalendarEventService.get_events_by_user_id(appointment.invited_user_id, uow)
 
     if is_event_overlapping(appointment, events):
         return ApiResponse(
             success=False,
-            message="Appointment is overlapping with existing appointment",
+            message="Event is overlapping with existing event in the schedule",
         )
 
     event = await CalendarEventService.add_event(uow, appointment)
@@ -164,7 +164,7 @@ async def schedule_appointment(
 
     return ApiResponse(
         success=True,
-        message="Appointment scheduled",
+        message="Event scheduled",
         data={
             "event": event
         }
@@ -181,7 +181,7 @@ async def get_appointments(
 
     return ApiResponse(
         success=True,
-        message="Appointments retrieved",
+        message="Events retrieved",
         data={
             "events": events
         }
@@ -201,13 +201,13 @@ async def delete_appointment(
     if not event:
         return ApiResponse(
             success=False,
-            message="Appointment not found",
+            message="Event not found",
         )
 
     if event.owner_user_id != auth.init_data.user.id and event.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
-            message="You are not authorized to delete this appointment",
+            message="You are not authorized to delete this event",
         )
 
     await CalendarEventService.delete_event(uow, event_id)
@@ -232,7 +232,7 @@ async def delete_appointment(
 
     return ApiResponse(
         success=True,
-        message="Appointment deleted",
+        message="Event deleted",
     )
 
 
@@ -250,13 +250,13 @@ async def edit_appointment(
     if not event:
         return ApiResponse(
             success=False,
-            message="Appointment not found",
+            message="Event not found",
         )
 
     if event.invited_user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,
-            message="You are not authorized to edit this appointment",
+            message="You are not authorized to edit this event",
         )
 
     user = await UserService.get_user(uow, event.owner_user_id)
@@ -272,16 +272,16 @@ async def edit_appointment(
     if not is_event_inside_schedule(appointment, user):
         return ApiResponse(
             success=False,
-            message="Appointment is not inside the schedule",
+            message="Event is not inside the user's schedule",
         )
 
-    events = await CalendarEventService.get_events(event.owner_user_id, uow)
-    events += await CalendarEventService.get_events(event.invited_user_id, uow)
+    events = await CalendarEventService.get_events_by_user_id(event.owner_user_id, uow)
+    events += await CalendarEventService.get_events_by_user_id(event.invited_user_id, uow)
 
     if is_event_overlapping(appointment, events, event_id):
         return ApiResponse(
             success=False,
-            message="Appointment is overlapping with existing appointment",
+            message="Event is overlapping with existing events in the schedule",
         )
 
     event = await CalendarEventService.edit_event(uow, event_id, appointment)
@@ -310,5 +310,5 @@ async def edit_appointment(
 
     return ApiResponse(
         success=True,
-        message="Appointment edited",
+        message="Event edited",
     )

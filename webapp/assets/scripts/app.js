@@ -61,7 +61,7 @@ async function onDayClicked(event) {
 }
 
 function onScheduleShareClick() {
-  Telegram.WebApp.switchInlineQuery("book", ["users"]);
+  Telegram.WebApp.switchInlineQuery(`book#${new Date().getTime()}`, ["users"]);
 }
 
 async function onSaveDataClick() {

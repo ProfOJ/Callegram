@@ -58,6 +58,11 @@ async function main() {
   }
   const event = await getEventDetails(eventId);
 
+  if (!event) {
+    window.location.href = "/";
+    return;
+  }
+
   displayEvent(event);
   disableLoading();
 

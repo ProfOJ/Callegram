@@ -253,6 +253,12 @@ function refreshProfileDayAvailability(windows) {
         return;
       }
 
+      if (oldScheduleDays.length === 1) {
+        Telegram.WebApp.HapticFeedback.notificationOccurred("error");
+        Telegram.WebApp.showAlert("You must have at least one available day.");
+        return;
+      }
+
       weekDayElement.classList.add("unavailable");
       oldScheduleDays.splice(oldScheduleDays.indexOf(dayIndex), 1);
       onProfileDataChanged({ scheduleDays: oldScheduleDays });

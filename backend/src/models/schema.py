@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ApiResponse(BaseModel):
@@ -16,7 +16,7 @@ class UserSchemaAuth(BaseModel):
 class UserSchemaProfileUpdate(BaseModel):
     name: str
     timezone: int
-    schedule_days: list[int]
+    schedule_days: list[int] = Field(min_length=1, max_length=7)
     schedule_type: str
 
 

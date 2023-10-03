@@ -18,6 +18,7 @@ async function authUser() {
   });
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }

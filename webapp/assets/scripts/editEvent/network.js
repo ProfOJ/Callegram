@@ -5,6 +5,7 @@ async function getEventDetails(eventId) {
   });
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
@@ -27,6 +28,7 @@ async function editEvent(eventId, event) {
   });
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     Telegram.WebApp.MainButton.setText("Yes, edit it!");
     Telegram.WebApp.MainButton.hideProgress();
@@ -36,6 +38,7 @@ async function editEvent(eventId, event) {
   const responseData = await response.json();
 
   if (!responseData.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(responseData.message);
     Telegram.WebApp.MainButton.setText("Yes, edit it!");
     Telegram.WebApp.MainButton.hideProgress();

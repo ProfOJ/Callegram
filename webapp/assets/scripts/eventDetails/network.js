@@ -9,12 +9,14 @@ async function deleteEvent(eventId) {
   );
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
 
   const responseData = await response.json();
   if (!responseData.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(data.message);
     return;
   }

@@ -82,9 +82,11 @@ async function main() {
     const currentQueryString = window.location.search;
     const newQueryString = new URLSearchParams(currentQueryString);
     newQueryString.set("eventId", eventId);
+    Telegram.WebApp.HapticFeedback.impactOccurred("light");
     window.location.href = `/editEvent?${newQueryString}`;
   });
 
+  // no haptic for this one because visual response is immediate
   const deleteButton = document.getElementById("deleteEventButton");
   deleteButton.addEventListener("click", () => {
     showConfirmationDialog(() => {

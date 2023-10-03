@@ -79,6 +79,7 @@ async function onEditConfirmed() {
 
   Telegram.WebApp.MainButton.hide();
   Telegram.WebApp.MainButton.hideProgress();
+  Telegram.WebApp.HapticFeedback.notificationOccurred("success");
   Telegram.WebApp.onEvent("popupClosed", () => {
     Telegram.WebApp.disableClosingConfirmation();
     Telegram.WebApp.BackButton.hide();
@@ -125,6 +126,7 @@ async function onDayClicked(event) {
   lastAvailableDate.setUTCHours(lastHour, lastMinute, 0, 0);
 
   if (today.getTime() > lastAvailableDate.getTime()) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("success");
     Telegram.WebApp.showAlert(
       "No available time slots, please select another day"
     );

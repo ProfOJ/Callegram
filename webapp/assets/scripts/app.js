@@ -10,6 +10,7 @@ const profileData = {
 };
 
 const saveProfileCallback = () => {
+  Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
   onSaveDataClick().then(() => {});
 };
 
@@ -89,6 +90,7 @@ async function onSaveDataClick() {
 }
 
 async function onEventClicked(event) {
+  Telegram.WebApp.HapticFeedback.impactOccurred("light"); // visual feedback is not immediate
   window.location.href = `/eventDetails?eventId=${event.id}`;
 }
 

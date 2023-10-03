@@ -8,12 +8,14 @@ async function getEventsForDate(date) {
   );
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
 
   const responseData = await response.json();
   if (!responseData.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(data.message);
     return;
   }
@@ -31,12 +33,14 @@ async function getBusyDays(from, to) {
   );
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
 
   const responseData = await response.json();
   if (!responseData.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(data.message);
     return;
   }
@@ -53,12 +57,14 @@ async function updateUserProfile(userId, profileData) {
   });
 
   if (response.status === 401) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert("Unauthenticated");
     return;
   }
 
   const responseData = await response.json();
   if (!responseData.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(data.message);
     return;
   }

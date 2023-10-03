@@ -82,6 +82,7 @@ async function onScheduleConfirmed() {
   Telegram.WebApp.onEvent("popupClosed", () => {
     Telegram.WebApp.close();
   });
+  Telegram.WebApp.HapticFeedback.notificationOccurred("success");
   Telegram.WebApp.showPopup({
     title: "Call scheduled!",
     message: "You will be notified in 20 and 10 minutes before the call",
@@ -123,6 +124,7 @@ async function onDayClicked(event) {
   lastAvailableDate.setUTCHours(lastHour, lastMinute, 0, 0);
 
   if (today.getTime() > lastAvailableDate.getTime()) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("warning");
     Telegram.WebApp.showAlert(
       "No available time slots, please select another day"
     );

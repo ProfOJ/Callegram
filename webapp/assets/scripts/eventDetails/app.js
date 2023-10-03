@@ -1,8 +1,12 @@
+let popupClosedCallback = null;
+
 async function onDeleteClicked(eventId) {
   Telegram.WebApp.MainButton.showProgress();
   const response = await deleteEvent(eventId);
   Telegram.WebApp.MainButton.hideProgress();
+
   if (!response.success) {
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
     Telegram.WebApp.showAlert(response.message);
     return;
   }
@@ -30,12 +34,21 @@ function showConfirmationDialog(confirmationCallback) {
     ],
   });
 
-  Telegram.WebApp.onEvent("popupClosed", (action) => {
-    if (action.button_id === "delete") {
-      confirmationCallback();
-      Telegram.WebApp.onEvent("popupClosed", () => {});
+  if (!popupClosedCallback) {
+    popupClosedCallback = (action) => {
+      if (action.button_id === "delete") {
+        confirmationCallback();
+        Telegram.WebApp.onEvent("popupClosed", () => {});
+        return;
+      }
+
+      // prevent duplicate callbacks if user clicks cancel
+      Telegram.WebApp.offEvent("popupClosed", popupClosedCallback);
+      popupClosedCallback = null;
     }
-  });
+  }
+
+  Telegram.WebApp.onEvent("popupClosed", popupClosedCallback);
 }
 
 async function main() {

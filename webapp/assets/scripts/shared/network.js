@@ -15,7 +15,7 @@ async function getOwnerAppointmentInfo(ownerUserId) {
   const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 
@@ -43,7 +43,7 @@ async function getDayAvailability(date, ownerUserId) {
   const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 

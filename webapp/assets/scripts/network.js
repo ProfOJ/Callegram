@@ -16,7 +16,7 @@ async function getEventsForDate(date) {
   const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 
@@ -41,7 +41,7 @@ async function getBusyDays(from, to) {
   const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 
@@ -65,7 +65,7 @@ async function updateUserProfile(userId, profileData) {
   const responseData = await response.json();
   if (!responseData.success) {
     Telegram.WebApp.HapticFeedback.notificationOccurred("error");
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 

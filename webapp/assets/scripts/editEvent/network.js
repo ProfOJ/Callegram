@@ -12,7 +12,7 @@ async function getEventDetails(eventId) {
 
   const responseData = await response.json();
   if (!responseData.success) {
-    Telegram.WebApp.showAlert(data.message);
+    Telegram.WebApp.showAlert(responseData.message);
     return;
   }
 

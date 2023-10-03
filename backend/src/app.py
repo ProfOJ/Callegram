@@ -1,4 +1,5 @@
 import asyncio
+import random
 
 from aiogram import Dispatcher
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton, \
@@ -24,11 +25,11 @@ bot = get_bot_instance()
 async def inline_query_handler(inline_query: InlineQuery):
     await bot.answer_inline_query(inline_query.id, results=[
         InlineQueryResultArticle(
-            id=f"booking_{inline_query.from_user.id}",
-            thumbnail_url="https://telegra.ph/file/f492c04ef04eb295d8833.png",
+            id=f"booking_{inline_query.from_user.id}_{random.randint(0, 100000)}",
+            thumbnail_url="https://telegra.ph/file/193cf38f7216c7471c4e2.jpg",
             input_message_content=InputTextMessageContent(message_text="Book a call with me using the button below."),
-            title="Share your schedule",
-            description="Share your schedule with others",
+            title="Send your schedule",
+            description="Your companion will choose your available slots for calling",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(
                     text="Book a call",

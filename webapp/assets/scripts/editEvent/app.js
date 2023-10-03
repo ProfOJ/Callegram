@@ -81,6 +81,7 @@ async function onEditConfirmed() {
   Telegram.WebApp.MainButton.hideProgress();
   Telegram.WebApp.onEvent("popupClosed", () => {
     Telegram.WebApp.disableClosingConfirmation();
+    Telegram.WebApp.BackButton.hide();
     window.location.href = "/";
   });
   Telegram.WebApp.showPopup({
@@ -167,6 +168,7 @@ async function main() {
   Telegram.WebApp.enableClosingConfirmation();
   Telegram.WebApp.BackButton.onClick(() => {
     Telegram.WebApp.disableClosingConfirmation();
+    Telegram.WebApp.BackButton.hide();
     window.location.href = "/eventDetails?eventId=" + calendarEvent.id;
   });
 

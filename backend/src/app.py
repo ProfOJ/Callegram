@@ -29,8 +29,8 @@ async def inline_query_handler(inline_query: InlineQuery):
             id=f"booking_{inline_query.from_user.id}_{random.randint(0, 100000)}",
             thumbnail_url="https://telegra.ph/file/193cf38f7216c7471c4e2.jpg",
             input_message_content=InputTextMessageContent(
-                message_text="Book[ ](https://telegra.ph/file/da6494d3c5ea2c395c855.mp4)a call with me using the "
-                             "button below.",
+                message_text="Book a call with me using the button " \
+                             "below[.](https://telegra.ph/file/da6494d3c5ea2c395c855.mp4)",
                 parse_mode="Markdown"),
             title="Send your schedule",
             description="Your companion will choose your available slots for calling",

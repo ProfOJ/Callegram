@@ -3,7 +3,8 @@ import random
 
 from aiogram import Dispatcher
 from aiogram.types import InlineQuery, InlineKeyboardMarkup, InlineKeyboardButton, \
-    InlineQueryResultArticle, InputTextMessageContent
+    InlineQueryResultArticle, InputTextMessageContent, Message, WebAppInfo, BotCommand
+from aiogram.filters.command import Command
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -41,6 +42,23 @@ async def inline_query_handler(inline_query: InlineQuery):
             ]]),
         )
     ])
+
+
+@bot_dispatcher.message(Command(BotCommand(command="start", description="Start the bot")))
+async def start_handler(message: Message):
+    await bot.send_video(
+        chat_id=message.from_user.id,
+        video="https://telegra.ph/file/811e0e49e8a9a04fb4c6c.mp4",
+        caption=f"*Let's get started 📆*[\n\n](https://telegra.ph/file/811e0e49e8a9a04fb4c6c.mp4)Tap the button below "
+                f"to check your current calls & setup your schedule!",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
+            InlineKeyboardButton(
+                text="Open Calendar",
+                web_app=WebAppInfo(url=WEB_APP_HOST)
+            )
+        ]]),
+        parse_mode="Markdown"
+    )
 
 
 scheduler.start()

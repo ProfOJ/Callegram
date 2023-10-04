@@ -133,7 +133,7 @@ async def schedule_appointment(
     event = await CalendarEventService.add_event(uow, appointment)
 
     await notification_service.send_owner_call_booked_notification(event)
-    await notification_service.send_invited_call_booked_notification(event)
+    was_sent = await notification_service.send_invited_call_booked_notification(event)
 
     min20_notification_time = event.appointment_time - timedelta(minutes=20)
     min10_notification_time = event.appointment_time - timedelta(minutes=10)
@@ -166,7 +166,8 @@ async def schedule_appointment(
         success=True,
         message="Event scheduled",
         data={
-            "event": event
+            "event": event,
+            "was_sent": was_sent
         }
     )
 
@@ -212,8 +213,8 @@ async def delete_appointment(
 
     await CalendarEventService.delete_event(uow, event_id)
 
-    await notification_service.send_call_canceled_by_user_notification(auth.init_data.user.id, event)
     await notification_service.send_call_canceled_of_user_notification(auth.init_data.user.id, event)
+    was_sent = await notification_service.send_call_canceled_by_user_notification(auth.init_data.user.id, event)
 
     try:
         scheduler.remove_job(f"{event.id}_20min")
@@ -233,6 +234,9 @@ async def delete_appointment(
     return ApiResponse(
         success=True,
         message="Event deleted",
+        data={
+            "was_sent": was_sent
+        }
     )
 
 
@@ -286,8 +290,8 @@ async def edit_appointment(
 
     event = await CalendarEventService.edit_event(uow, event_id, appointment)
 
-    await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
     await notification_service.send_call_edited_of_user_notification(auth.init_data.user.id, event)
+    was_sent = await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
 
     try:
         scheduler.reschedule_job(
@@ -311,4 +315,8 @@ async def edit_appointment(
     return ApiResponse(
         success=True,
         message="Event edited",
+        data={
+            "event": event,
+            "was_sent": was_sent
+        }
     )

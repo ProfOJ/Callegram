@@ -11,6 +11,20 @@ const scheduleSummary = {
   name: "",
 };
 
+
+let popupClosedCallback = null;
+
+let writeAccessRequestCount = 0;
+const writeAccessRequestCallback = (granted) => {
+  if (granted || writeAccessRequestCount == 1) {
+    Telegram.WebApp.close();
+    return;
+  }
+
+  writeAccessRequestCount++;
+  Telegram.WebApp.requestWriteAccess(writeAccessRequestCallback);
+};
+
 function onHourChanged(event, availability) {
   const hour = event.target.value;
   const scheduleMinuteSelector = document.getElementById(
@@ -41,9 +55,7 @@ function onScheduleDataChanged(newData) {
   }
 
   if (newData.hasOwnProperty("date")) {
-    scheduleData.appointment_time.setFullYear(
-      newData["date"].getFullYear()
-    );
+    scheduleData.appointment_time.setFullYear(newData["date"].getFullYear());
     scheduleSummary.dateTime.setFullYear(newData["date"].getFullYear());
 
     scheduleData.appointment_time.setMonth(newData["date"].getMonth());
@@ -79,9 +91,6 @@ async function onScheduleConfirmed() {
 
   Telegram.WebApp.MainButton.hide();
   Telegram.WebApp.MainButton.hideProgress();
-  Telegram.WebApp.onEvent("popupClosed", () => {
-    Telegram.WebApp.close();
-  });
   Telegram.WebApp.HapticFeedback.notificationOccurred("success");
   Telegram.WebApp.showPopup({
     title: "Call scheduled!",
@@ -93,6 +102,31 @@ async function onScheduleConfirmed() {
       },
     ],
   });
+
+  popupClosedCallback = () => {
+    if (response.data.was_sent) {
+      Telegram.WebApp.close();
+      return;
+    }
+
+    Telegram.WebApp.HapticFeedback.notificationOccurred("error");
+    Telegram.WebApp.offEvent("popupClosed", popupClosedCallback);
+    Telegram.WebApp.showPopup({
+      title: "Oops!",
+      message:
+        "Seems like you blocked the @CallegramBot from messaging you. Please unblock it to receive reminders.",
+      buttons: [
+        {
+          id: "ok",
+          type: "ok",
+        },
+      ],
+    });
+    Telegram.WebApp.onEvent("popupClosed", () => {
+      Telegram.WebApp.requestWriteAccess(writeAccessRequestCallback);
+    });
+  };
+  Telegram.WebApp.onEvent("popupClosed", popupClosedCallback);
 }
 
 async function onDayClicked(event) {

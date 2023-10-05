@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from bot.bot import get_bot_instance
-from config import WEB_APP_HOST
+from config import WEB_APP_HOST, BOT_USERNAME
 from routes.events import router as event_router
 from routes.schedules import router as schedule_router
 from routes.user import router as user_router
@@ -37,7 +37,7 @@ async def inline_query_handler(inline_query: InlineQuery):
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[[
                 InlineKeyboardButton(
                     text="Book a call",
-                    url=f"t.me/CallegramBot/book?startapp=user_{inline_query.from_user.id}"
+                    url=f"t.me/{BOT_USERNAME}/book?startapp=user_{inline_query.from_user.id}"
                 )
             ]]),
         )

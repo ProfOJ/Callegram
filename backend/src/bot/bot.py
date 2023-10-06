@@ -5,7 +5,7 @@ from aiogram.client.telegram import TelegramAPIServer
 from config import BOT_TOKEN, ENVIRONMENT
 
 
-def get_bot_instance():
+def get_bot_instance() -> Bot:
     environment_path = 'test/' if ENVIRONMENT == "test" else ''
     session = AiohttpSession(
         api=TelegramAPIServer(

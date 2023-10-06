@@ -15,6 +15,16 @@ async def user_auth(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
+    """
+    User authentication
+
+    This method is used to authenticate a user. If user doesn't exist, it is created.
+
+    :param user_auth_data: user auth data
+    :param uow: unit of work instance
+    :param auth: auth service
+    :return: api response with user data
+    """
     user = await UserService.get_user(uow, auth.init_data.user.id)
 
     if not user:
@@ -48,6 +58,16 @@ async def get_user_info(
         uow: UOWDep,
         _: AuthService = Depends(auth_service),
 ) -> ApiResponse:
+    """
+    Get user info
+
+    This method is used to get user info by id on the "New event" screen.
+
+    :param user_id: user id as integer
+    :param uow: unit of work instance
+    :param _: auth service (not used)
+    :return: api response with user data without notification time
+    """
     user = await UserService.get_user(uow, user_id)
 
     if not user:
@@ -78,6 +98,17 @@ async def update_user_info(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
+    """
+    Update user info
+
+    This method is used to update user info on the "Profile" screen.
+
+    :param user_id: user id as integer
+    :param user_data: new user data
+    :param uow: unit of work instance
+    :param auth: auth service
+    :return: api response with new user data
+    """
     if user_id != auth.init_data.user.id:
         return ApiResponse(
             success=False,

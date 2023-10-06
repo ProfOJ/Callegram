@@ -1,5 +1,5 @@
 from sqlalchemy import Column
-from sqlalchemy.orm import joinedload, selectinload
+from sqlalchemy.orm import joinedload
 
 from database.models import User
 from repositories.base import SQLAlchemyRepository

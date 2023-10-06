@@ -7,15 +7,37 @@ from aiogram.exceptions import TelegramForbiddenError
 
 from bot.bot import get_bot_instance
 from config import WEB_APP_HOST
-from models.view import CalendarEvent
+from models.view import CalendarEvent, User
 
 
 class TelegramNotificationService:
+    """
+    Telegram notification service
+
+    This class is used to send notifications to users via Telegram.
+
+    List of responsibilities:
+    - send notification to schedule owner about new booked call
+    - send notification to booking creator about new booked call
+    - send notification to schedule owner about canceled call
+    - send notification to booking creator about canceled call
+    - send notification to schedule owner about edited call
+    - send notification to booking creator about edited call
+    - send call reminder notification to schedule owner
+    - send call reminder notification to booking creator
+    - send call started notification to schedule owner (only used with the scheduler)
+    - send call started notification to booking creator (only used with the scheduler)
+    """
 
     def __init__(self, bot: Bot):
         self.bot = bot
 
     async def send_owner_call_booked_notification(self, booking_details: CalendarEvent):
+        """
+        Send notification to schedule owner about new booked call
+
+        :param booking_details: booking details
+        """
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=booking_details.owner_user.timezone * -1))
         )
@@ -34,6 +56,12 @@ class TelegramNotificationService:
             pass  # message sending wasn't initiated by recipient, so there's no way to ask for permission
 
     async def send_invited_call_booked_notification(self, booking_details: CalendarEvent) -> bool:
+        """
+        Send notification to booking creator about new booked call
+
+        :param booking_details: booking details
+        :return: True if notification was sent, False otherwise
+        """
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=booking_details.invited_user.timezone * -1))
         )
@@ -53,8 +81,15 @@ class TelegramNotificationService:
             return False
 
     async def send_call_canceled_by_user_notification(self, canceled_by: int, booking_details: CalendarEvent) -> bool:
-        canceled_by_user = booking_details.owner_user if canceled_by == booking_details.owner_user_id else booking_details.invited_user
-        opposite_user = booking_details.invited_user if canceled_by == booking_details.owner_user_id else booking_details.owner_user
+        """
+        Send notification to schedule owner about canceled call
+
+        :param canceled_by: user id of the user who canceled the call
+        :param booking_details: booking details
+        :return: True if notification was sent, False otherwise
+        """
+        canceled_by_user: User = booking_details.owner_user if canceled_by == booking_details.owner_user_id else booking_details.invited_user
+        opposite_user: User = booking_details.invited_user if canceled_by == booking_details.owner_user_id else booking_details.owner_user
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=canceled_by_user.timezone * -1))
         )
@@ -71,8 +106,14 @@ class TelegramNotificationService:
             return False
 
     async def send_call_canceled_of_user_notification(self, canceled_by: int, booking_details: CalendarEvent):
-        canceled_by_user = booking_details.owner_user if canceled_by == booking_details.owner_user_id else booking_details.invited_user
-        opposite_user = booking_details.invited_user if canceled_by == booking_details.owner_user_id else booking_details.owner_user
+        """
+        Send notification to booking creator about canceled call
+
+        :param canceled_by: user id of the user who canceled the call
+        :param booking_details: booking details
+        """
+        canceled_by_user: User = booking_details.owner_user if canceled_by == booking_details.owner_user_id else booking_details.invited_user
+        opposite_user: User = booking_details.invited_user if canceled_by == booking_details.owner_user_id else booking_details.owner_user
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=opposite_user.timezone * -1))
         )
@@ -87,8 +128,15 @@ class TelegramNotificationService:
             pass  # message sending wasn't initiated by recipient, so there's no way to ask for permission
 
     async def send_call_edited_by_user_notification(self, edited_by: int, booking_details: CalendarEvent) -> bool:
-        edited_by_user = booking_details.owner_user if edited_by == booking_details.owner_user_id else booking_details.invited_user
-        opposite_user = booking_details.invited_user if edited_by == booking_details.owner_user_id else booking_details.owner_user
+        """
+        Send notification to schedule owner about edited call
+
+        :param edited_by: user id of the user who edited the call
+        :param booking_details: updated booking details
+        :return: True if notification was sent, False otherwise
+        """
+        edited_by_user: User = booking_details.owner_user if edited_by == booking_details.owner_user_id else booking_details.invited_user
+        opposite_user: User = booking_details.invited_user if edited_by == booking_details.owner_user_id else booking_details.owner_user
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=edited_by_user.timezone * -1))
         )
@@ -108,8 +156,14 @@ class TelegramNotificationService:
             return False
 
     async def send_call_edited_of_user_notification(self, edited_by: int, booking_details: CalendarEvent):
-        edited_by_user = booking_details.owner_user if edited_by == booking_details.owner_user_id else booking_details.invited_user
-        opposite_user = booking_details.invited_user if edited_by == booking_details.owner_user_id else booking_details.owner_user
+        """
+        Send notification to booking creator about edited call
+
+        :param edited_by: user id of the user who edited the call
+        :param booking_details: updated booking details
+        """
+        edited_by_user: User = booking_details.owner_user if edited_by == booking_details.owner_user_id else booking_details.invited_user
+        opposite_user: User = booking_details.invited_user if edited_by == booking_details.owner_user_id else booking_details.owner_user
         local_datetime = booking_details.appointment_time.astimezone(
             timezone(timedelta(minutes=opposite_user.timezone * -1))
         )
@@ -129,6 +183,10 @@ class TelegramNotificationService:
 
 
 def send_call_reminder_notification(**kwargs):
+    """
+    Send call reminder notification to schedule owner and booking creator. This function is used with the scheduler.
+    :param kwargs: booking details and minutes before start
+    """
     bot = get_bot_instance()
     booking_details: CalendarEvent = kwargs.get("booking_details")
     minutes_before_start: int = kwargs.get("minutes_before_start")
@@ -160,6 +218,11 @@ def send_call_reminder_notification(**kwargs):
 
 
 def send_call_started_notification(**kwargs):
+    """
+    Send call started notification to schedule owner and booking creator. This function is used with the scheduler.
+
+    :param kwargs: booking details
+    """
     bot = get_bot_instance()
     booking_details: CalendarEvent = kwargs.get("booking_details")
     loop = asyncio.new_event_loop()

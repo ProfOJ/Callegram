@@ -33,6 +33,10 @@ class AbstractUnitOfWork(ABC):
 
 
 class UnitOfWork:
+    """
+    Unit of work pattern implementation
+    """
+
     def __init__(self):
         self.session_factory = async_session_maker
 

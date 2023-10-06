@@ -2,7 +2,6 @@ import uuid
 
 from sqlalchemy import Column, DateTime, func, VARCHAR, Integer, ForeignKey, BigInteger
 from sqlalchemy.dialects.postgresql import UUID, INTERVAL, ARRAY
-from sqlalchemy.ext.mutable import Mutable
 from sqlalchemy.orm import relationship
 
 from database.database import Base

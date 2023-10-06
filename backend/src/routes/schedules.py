@@ -18,6 +18,17 @@ async def get_day_availability(
         uow: UOWDep,
         _: AuthService = Depends(auth_service),
 ) -> ApiResponse:
+    """
+    Get single day availability
+
+    This endpoint returns user's available slots for the given day, according to events in their calendar.
+
+    :param user_id: user id as integer
+    :param date: date without time
+    :param uow: unit of work instance
+    :param _: auth service (unused)
+    :return: api response with user's day availability
+    """
     user = await UserService.get_user(uow, user_id)
 
     if not user:
@@ -44,6 +55,17 @@ async def get_busy_days(
         uow: UOWDep,
         auth: AuthService = Depends(auth_service),
 ) -> ApiResponse:
+    """
+    Get busy days
+
+    This endpoint returns list of dates in given range without time for which the given user has any calls scheduled.
+
+    :param from_date start date of the range without time
+    :param to_date: end date of the range without time
+    :param uow: unit of work instance
+    :param auth: auth service
+    :return: api response with the list of dates
+    """
     user = await UserService.get_user(uow, auth.init_data.user.id)
 
     if not user:

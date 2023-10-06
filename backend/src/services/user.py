@@ -19,9 +19,29 @@ SCHEDULE_TYPE_LATE = {
 
 
 class UserService:
+    """
+    User service
+
+    This service is responsible for user-related operations
+
+    List of responsibilities:
+    - register user
+    - get users
+    - get user
+    - update user (as per database schema)
+    - update user profile (only for name and schedule)
+    """
 
     @staticmethod
-    def get_windows(schedule_type: str, weekdays: list[int], timezone: int = 0):
+    def get_windows(schedule_type: str, weekdays: list[int], timezone: int = 0) -> list[list[int]]:
+        """
+        Get windows for schedule
+
+        :param schedule_type: one of 'early', 'default', 'late'
+        :param weekdays: list of weekdays (0 - Monday, 6 - Sunday)
+        :param timezone: timezone offset in minutes
+        :return: list of windows for each weekday in the format [[start, end], ...]
+        """
         windows = []
         for day in range(7):
             if day not in weekdays:
@@ -41,6 +61,15 @@ class UserService:
         return windows
 
     async def register_user(self, uow: AbstractUnitOfWork, user: User) -> int:
+        """
+        Register user
+
+        This method is used to register user in the database. It creates a schedule for the user with default values.
+
+        :param uow: unit of work instance
+        :param user: user view model
+        :return: user id
+        """
         async with uow:
             user_id = await uow.users.add_one({
                 'id': user.id,
@@ -57,6 +86,15 @@ class UserService:
 
     @staticmethod
     async def add_user(uow: AbstractUnitOfWork, user: User) -> int:
+        """
+        Add user
+
+        This method is used to create a user in the database. It doesn't create a schedule for the user.
+
+        :param uow:
+        :param user:
+        :return:
+        """
         async with uow:
             user_id = await uow.users.add_one({
                 'id': user.id,
@@ -68,12 +106,29 @@ class UserService:
             return user_id
 
     @staticmethod
-    async def get_users(uow: AbstractUnitOfWork):
+    async def get_users(uow: AbstractUnitOfWork) -> list[User]:
+        """
+        Get users
+
+        This method is used to get all users from the database.
+
+        :param uow: unit of work instance
+        :return: list of users
+        """
         async with uow:
             return await uow.users.find_all()
 
     @staticmethod
-    async def get_user(uow: AbstractUnitOfWork, user_id: int):
+    async def get_user(uow: AbstractUnitOfWork, user_id: int) -> User | None:
+        """
+        Get user
+
+        This method is used to get a user from the database by id. If user doesn't exist, None is returned.
+
+        :param uow: unit of work instance
+        :param user_id: user id as integer
+        :return: user view model
+        """
         async with uow:
             user = await uow.users.find_one_or_none(user_id)
 
@@ -92,7 +147,17 @@ class UserService:
             )
 
     @staticmethod
-    async def update_user(uow: AbstractUnitOfWork, user_id: int, user: UserSchemaUpdate):
+    async def update_user(uow: AbstractUnitOfWork, user_id: int, user: UserSchemaUpdate) -> User:
+        """
+        Update user
+
+        This method is used to update user in the database. It doesn't update user's schedule.
+
+        :param uow: unit of work instance
+        :param user_id: user id as integer
+        :param user: user schema with new values
+        :return: user view model
+        """
         async with uow:
             user = await uow.users.update_one(user_id, {
                 'name': user.name,
@@ -102,7 +167,17 @@ class UserService:
             await uow.commit()
             return user
 
-    async def update_user_profile(self, uow: AbstractUnitOfWork, user_id: int, user: UserSchemaProfileUpdate):
+    async def update_user_profile(self, uow: AbstractUnitOfWork, user_id: int, user: UserSchemaProfileUpdate) -> int:
+        """
+        Update user profile
+
+        This method is used to update user's profile in the database. It updates user's schedule and name.
+
+        :param uow: unit of work instance
+        :param user_id: user id as integer
+        :param user: user schema with new values
+        :return: user id
+        """
         async with uow:
             await uow.users.update_one(user_id, {'name': user.name})
             schedule = await uow.schedules.find_one_by_user_id(user_id)
@@ -114,7 +189,16 @@ class UserService:
             return user_id
 
     @staticmethod
-    async def delete_user(uow: AbstractUnitOfWork, user_id: int):
+    async def delete_user(uow: AbstractUnitOfWork, user_id: int) -> int:
+        """
+        Delete user
+
+        This method is used to delete user from the database.
+
+        :param uow: unit of work instance
+        :param user_id: user id as integer
+        :return: user id
+        """
         async with uow:
             user_id = await uow.users.delete_one(user_id)
             await uow.commit()

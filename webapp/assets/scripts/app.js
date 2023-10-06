@@ -159,12 +159,14 @@ async function main() {
   initProfile(authData);
 
   const today = new Date();
+  const dateStart = new Date(
+    Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+  );
   const dateEnd = new Date(
     Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + 15)
   );
-  today.setUTCHours(0, 0, 0, 0);
 
-  const busyDays = await getBusyDays(today, dateEnd);
+  const busyDays = await getBusyDays(dateStart, dateEnd);
 
   // sort busy dates in ascending order
   busyDays.sort((a, b) => {

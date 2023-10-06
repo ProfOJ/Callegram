@@ -1,3 +1,4 @@
+// user profile data that's only filled on load and when saving changes
 const initialProfileData = {
   name: "",
   timezone: new Date().getTimezoneOffset(),
@@ -5,6 +6,7 @@ const initialProfileData = {
   scheduleType: "default",
 };
 
+// current profile data
 const profileData = {
   timezone: new Date().getTimezoneOffset(),
 };
@@ -27,6 +29,12 @@ function wasProfileDataChanged() {
   );
 }
 
+/**
+ * "Calls" tab week day click handler. Warns for inactive days, loads and displays events for the selected date.
+ *
+ * @param {MouseEvent} event click event
+ * @returns nothing
+ */
 async function onDayClicked(event) {
   const weekDayElement = event.target;
 
@@ -65,6 +73,11 @@ function onScheduleShareClick() {
   Telegram.WebApp.switchInlineQuery(`book#${new Date().getTime()}`, ["users"]);
 }
 
+/**
+ * "Save changes" MainButton click handler. Saves updated user profile info and resets the sate.
+ *
+ * @returns nothing
+ */
 async function onSaveDataClick() {
   if (!wasProfileDataChanged()) {
     return;
@@ -133,6 +146,7 @@ async function main() {
 
   initialProfileData.name = authData.user.name;
   profileData.name = authData.user.name;
+  // {"1": [], "2": []} to [1, 2] etc.
   const scheduleDays = Object.keys(authData.user.schedule.windows).map((day) =>
     parseInt(day)
   );
@@ -152,6 +166,7 @@ async function main() {
 
   const busyDays = await getBusyDays(today, dateEnd);
 
+  // sort busy dates in ascending order
   busyDays.sort((a, b) => {
     const dateA = new Date(a);
     const dateB = new Date(b);

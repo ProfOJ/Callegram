@@ -1,3 +1,8 @@
+/**
+ * Disable days that have no events
+ *
+ * @param {Array} busyDays days where there are any events for the current user
+ */
 function disableFreeDays(busyDays) {
   const weekDayElements = document.getElementsByClassName("weekDay");
 
@@ -14,6 +19,13 @@ function disableFreeDays(busyDays) {
   }
 }
 
+/**
+ * Create new DOM element with the specified event model to be inserted into the events list
+ * 
+ * @param event event view model
+ * @param {boolean} stub indicates whether the element should be an empty one with text "No calls"
+ * @returns new dom element ready to be inserted into list
+ */
 function createEventElement(event, stub = false) {
   const eventRootContainer = document.createElement("div");
   eventRootContainer.classList.add("dayEvent");
@@ -70,6 +82,11 @@ function createEventElement(event, stub = false) {
   return eventRootContainer;
 }
 
+/**
+ * Add events to the event list
+ * 
+ * @param {Array} events array of event view models
+ */
 function populateEvents(events) {
   const eventsByHour = {};
 
@@ -214,6 +231,11 @@ function initWeekDays() {
   }
 }
 
+/**
+ * Refresh status of the user's schedule day view
+ * 
+ * @param {Array} windows list of user's schedule windows
+ */
 function refreshProfileDayAvailability(windows) {
   const scheduleDays = [0, 1, 2, 3, 4, 5, 6];
   const weekDays = document.getElementsByClassName("settingsWeekDayName");
@@ -241,6 +263,7 @@ function refreshProfileDayAvailability(windows) {
 
   for (let dayIndex = 0; dayIndex < weekDayElements.length; dayIndex++) {
     const weekDayElement = weekDayElements[dayIndex];
+
     weekDayElement.onclick = () => {
       Telegram.WebApp.HapticFeedback.selectionChanged();
       const oldScheduleDays = [...profileData.schedule_days];

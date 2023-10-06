@@ -1,3 +1,4 @@
+// schedule data which is then sent to the API
 const scheduleData = {
   owner_user_id: null,
   invited_user_id: null,
@@ -5,12 +6,12 @@ const scheduleData = {
   duration: "PT30M", // hardcoded on server anyway
 };
 
+// summary model
 const scheduleSummary = {
   dateTime: new Date(),
   duration: "30 min",
   name: "",
 };
-
 
 let popupClosedCallback = null;
 

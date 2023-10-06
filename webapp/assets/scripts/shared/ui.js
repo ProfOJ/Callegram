@@ -51,6 +51,7 @@ function unblockSection(index) {
   }
 }
 
+// used to initialize generic two week calendar view
 function populateDays() {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -79,6 +80,7 @@ function populateDays() {
   }
 }
 
+// used to initialize and refresh generic selectors for hour and minute
 function populateTimeSlots(availability, selectedDate) {
   let scheduleHourSelector = document.getElementById("scheduleHourSelector");
   scheduleHourSelector.innerHTML = "";
@@ -121,11 +123,10 @@ function populateTimeSlots(availability, selectedDate) {
   for (const hour of hours) {
     const option = document.createElement("option");
 
-    // -8 utc offset
     const timezoneOffset = new Date().getTimezoneOffset();
     let localHour = +hour - timezoneOffset / 60;
 
-    // overflow
+    // overflow hours to next or previous days
     let overflow = 0;
     if (localHour < 0) {
       localHour += 24;

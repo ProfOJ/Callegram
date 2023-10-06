@@ -1,10 +1,12 @@
 let calendarEvent = null;
 
+// model to send to the API
 const scheduleData = {
   appointment_time: new Date(),
   duration: "PT30M", // hardcoded on server anyway
 };
 
+// summary data holder
 const scheduleSummary = {
   dateTime: new Date(),
   duration: "30 min",

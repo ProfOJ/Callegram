@@ -35,6 +35,12 @@ function getUser() {
   return JSON.parse(localStorage.getItem("user"));
 }
 
+/**
+ * Function to execute some callback only when the condition is met. Useful for waiting until some window objects are initialized
+ * 
+ * @param {Function} conditionFunction function to use for checking if the promise cab be resolved
+ * @returns promise to resolve
+ */
 function waitFor(conditionFunction) {
   const poll = resolve => {
     if(conditionFunction()) resolve();

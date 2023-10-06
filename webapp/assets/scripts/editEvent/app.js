@@ -206,7 +206,16 @@ async function main() {
 
   // get first available day and simulate a click
   for (const weekDayElement of weekDayElements) {
-    if (!weekDayElement.classList.contains("unavailable")) {
+    const weekDayDate = new Date(weekDayElement.getAttribute("data-date"));
+    const today = new Date();
+
+    weekDayDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (
+      !weekDayElement.classList.contains("unavailable") &&
+      weekDayDate.getTime() == today.getTime()
+    ) {
       weekDayElement.click();
       break;
     }

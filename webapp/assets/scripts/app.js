@@ -148,7 +148,7 @@ async function main() {
   const dateEnd = new Date(
     Date.UTC(today.getFullYear(), today.getMonth(), today.getDate() + 15)
   );
-  today.setUTCHours(0, 0, 0, 0);
+  today.setHours(0, 0, 0, 0);
 
   const busyDays = await getBusyDays(today, dateEnd);
 

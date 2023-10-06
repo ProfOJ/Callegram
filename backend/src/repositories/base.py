@@ -95,7 +95,7 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def find_one_or_none(self, id: str | int, **kwargs) -> model | None:
+    async def find_one_or_none(self, id: str | int, **kwargs):
         stmt = select(self.model).where(self.model.id == id)
         if 'options' in kwargs:
             for option in kwargs['options']:
@@ -133,7 +133,7 @@ class SQLAlchemyRepository(AbstractRepository):
         res = await self.session.execute(stmt)
         return res.scalar_one()
 
-    async def find_one_or_none_by(self, column: Column, value, **kwargs) -> model | None:
+    async def find_one_or_none_by(self, column: Column, value, **kwargs):
         stmt = select(self.model).where(column == value)
         if 'options' in kwargs:
             for option in kwargs['options']:

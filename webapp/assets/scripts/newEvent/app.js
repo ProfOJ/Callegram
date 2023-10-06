@@ -80,6 +80,7 @@ function onScheduleDataChanged(newData) {
 }
 
 async function onScheduleConfirmed() {
+  Telegram.WebApp.HapticFeedback.impactOccurred("heavy");
   Telegram.WebApp.MainButton.setText("Scheduling...");
   Telegram.WebApp.MainButton.showProgress();
 
@@ -130,6 +131,7 @@ async function onScheduleConfirmed() {
 }
 
 async function onDayClicked(event) {
+  Telegram.WebApp.HapticFeedback.selectionChanged();
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
     day.classList.remove("selected");

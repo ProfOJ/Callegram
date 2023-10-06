@@ -98,6 +98,7 @@ async function onEditConfirmed() {
 }
 
 async function onDayClicked(event) {
+  Telegram.WebApp.HapticFeedback.selectionChanged();
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
     day.classList.remove("selected");

@@ -187,6 +187,74 @@ function populateTimeSlots(availability, selectedDate) {
   return [+hours[0], +minutes[0]];
 }
 
+function setFakeTimeSlots(hour, minute) {
+  let scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  let scheduleMinuteSelector = document.getElementById(
+    "scheduleMinuteSelector"
+  );
+
+  scheduleHourSelector.innerHTML = "";
+  scheduleMinuteSelector.innerHTML = "";
+
+  const option = document.createElement("option");
+  option.value = hour;
+  option.innerText = `${hour}`.padStart(2, "0") + "h";
+  scheduleHourSelector.appendChild(option);
+
+  const option2 = document.createElement("option");
+  option2.value = minute;
+  option2.innerText = `${minute}`.padStart(2, "0") + "min";
+  scheduleMinuteSelector.appendChild(option2);
+
+  // clear all event listeners
+  scheduleHourSelector.parentNode.replaceChild(
+    scheduleHourSelector.cloneNode(true),
+    scheduleHourSelector
+  );
+  scheduleMinuteSelector.parentNode.replaceChild(
+    scheduleMinuteSelector.cloneNode(true),
+    scheduleMinuteSelector
+  );
+
+  // get new element refs
+  scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  scheduleMinuteSelector = document.getElementById("scheduleMinuteSelector");
+
+  scheduleHourSelector.addEventListener("change", (event) => {
+    onHourChanged(event, availability);
+  });
+
+  scheduleHourSelector.addEventListener("change", (event) => {
+    onScheduleDataChanged({ hour: +event.target.value });
+  });
+
+  scheduleMinuteSelector.addEventListener("change", (event) => {
+    onScheduleDataChanged({ minute: +event.target.value });
+  });
+
+  blockTimePicker();
+}
+
+function blockTimePicker() {
+  const scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  const scheduleMinuteSelector = document.getElementById(
+    "scheduleMinuteSelector"
+  );
+
+  scheduleHourSelector.disabled = true;
+  scheduleMinuteSelector.disabled = true;
+}
+
+function unblockTimePicker() {
+  const scheduleHourSelector = document.getElementById("scheduleHourSelector");
+  const scheduleMinuteSelector = document.getElementById(
+    "scheduleMinuteSelector"
+  );
+
+  scheduleHourSelector.disabled = false;
+  scheduleMinuteSelector.disabled = false;
+}
+
 function refreshDayAvailability(schedule) {
   const weekDayDates = document.getElementsByClassName("weekDay");
   for (let i = 0; i < weekDayDates.length; i++) {

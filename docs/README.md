@@ -105,7 +105,7 @@ docker compose up -d --build
 lt --port 5000
 ```
 
-5. If you've ran localtunnel, change the `API_BASE_URL` in the `/webapp/assets/scripts/shared/common.js` file to the url you got from localtunnel.
+5. If you've ran localtunnel, change the `API_BASE_URL` in the `/webapp/assets/scripts/shared/common.js` file to the url you got from localtunnel **WITHOUT THE TRAILING SLASH**.
 
 6. If you've ran localtunnel, go to the url provided by it and enter your external IP address following the instructions at the bottom of the page.
 

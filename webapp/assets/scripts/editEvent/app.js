@@ -145,7 +145,7 @@ async function onDayClicked(element, initialTime = null) {
   if (initialTime) {
     // in case of editing, we need to select the first available time after the initial time
     selectedHour = Math.max(selectedHour, initialTime.hour);
-    selectedMinute = availability[initialTime.hour].find(
+    selectedMinute = availability[initialTime.hour]?.find(
       (minute) => minute == initialTime.minute
     ) || selectedMinute;
 

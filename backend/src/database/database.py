@@ -4,7 +4,7 @@ from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import NullPool
+from sqlalchemy.pool import AsyncAdaptedQueuePool
 
 from config import DB_HOST, DB_NAME, DB_PASSWORD, DB_PORT, DB_USER
 
@@ -13,7 +13,7 @@ Base = declarative_base()
 
 metadata = MetaData()
 
-engine = create_async_engine(DATABASE_URL, poolclass=NullPool, pool_size=100, max_overflow=10)
+engine = create_async_engine(DATABASE_URL, poolclass=AsyncAdaptedQueuePool, pool_size=100, max_overflow=10)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

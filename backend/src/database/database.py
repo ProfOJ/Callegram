@@ -13,7 +13,7 @@ Base = declarative_base()
 
 metadata = MetaData()
 
-engine = create_async_engine(DATABASE_URL, poolclass=NullPool)
+engine = create_async_engine(DATABASE_URL, poolclass=NullPool, pool_size=100, max_overflow=10)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 

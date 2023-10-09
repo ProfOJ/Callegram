@@ -99,14 +99,12 @@ async function onEditConfirmed() {
   });
 }
 
-async function onDayClicked(event) {
-  Telegram.WebApp.HapticFeedback.selectionChanged();
+async function onDayClicked(element, initialTime = null) {
   const allDays = document.getElementsByClassName("weekDay");
   for (const day of allDays) {
     day.classList.remove("selected");
   }
 
-  const element = event.target;
   element.classList.add("selected");
   const selectedDate = new Date(element.getAttribute("data-date"));
   blockSection(2);
@@ -139,10 +137,29 @@ async function onDayClicked(event) {
     return;
   }
 
-  const [
+  let [
     selectedHour, // first available hour
     selectedMinute, // first available minute
   ] = populateTimeSlots(availability, selectedDate);
+
+  if (initialTime) {
+    const timezoneOffset = new Date().getTimezoneOffset();
+    selectedHour = initialTime.hour;
+    selectedMinute = initialTime.minute;
+
+    console.log(selectedHour, selectedMinute);
+    console.log(timezoneOffset);
+
+    const scheduleHourSelector = document.getElementById(
+      "scheduleHourSelector"
+    );
+    scheduleHourSelector.value = selectedHour;
+
+    const scheduleMinuteSelector = document.getElementById(
+      "scheduleMinuteSelector"
+    );
+    scheduleMinuteSelector.value = selectedMinute;
+  }
 
   onScheduleDataChanged({
     date: selectedDate,
@@ -193,39 +210,45 @@ async function main() {
 
   refreshDayAvailability(ownerInfo.schedule.windows);
 
+  const eventDate = new Date(calendarEvent.appointment_time);
+  const cleanEventDate = new Date(calendarEvent.appointment_time); // with unmodified hours
+  const timezoneOffset = new Date().getTimezoneOffset();
   const weekDayElements = document.getElementsByClassName("weekDay");
   for (const weekDayElement of weekDayElements) {
-    if (weekDayElement.classList.contains("unavailable")) {
-      continue;
-    }
-
-    weekDayElement.addEventListener("click", (event) => {
-      onDayClicked(event).then(() => {});
-    });
-  }
-
-  // get first available day and simulate a click
-  for (const weekDayElement of weekDayElements) {
     const weekDayDate = new Date(weekDayElement.getAttribute("data-date"));
-    const today = new Date();
 
     weekDayDate.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+    eventDate.setHours(0, 0, 0, 0);
 
-    if (
-      !weekDayElement.classList.contains("unavailable") &&
-      weekDayDate.getTime() == today.getTime()
-    ) {
-      weekDayElement.click();
-      break;
+    if (!weekDayElement.classList.contains("unavailable")) {
+      weekDayElement.addEventListener("click", (event) => {
+        Telegram.WebApp.HapticFeedback.selectionChanged();
+        unblockTimePicker();
+        onDayClicked(weekDayElement).then(() => {});
+      });
+    }
+
+    if (weekDayDate.getTime() == eventDate.getTime()) {
+      weekDayElement.classList.add("selected");
+      if (weekDayElement.classList.contains("unavailable")) {
+        setFakeTimeSlots(
+          cleanEventDate.getHours() - timezoneOffset / 60,
+          cleanEventDate.getMinutes()
+        );
+        continue;
+      }
+      onDayClicked(weekDayElement, {
+        hour: cleanEventDate.getHours(),
+        minute: cleanEventDate.getMinutes(),
+      }).then(() => {});
     }
   }
 
   onScheduleDataChanged({
     name: ownerInfo.name,
-    hour: new Date(calendarEvent.appointment_time).getUTCHours(),
-    minute: new Date(calendarEvent.appointment_time).getUTCMinutes(),
-    date: new Date(calendarEvent.appointment_time),
+    hour: cleanEventDate.getHours(),
+    minute: cleanEventDate.getMinutes(),
+    date: cleanEventDate,
     duration: calendarEvent.duration,
   });
 

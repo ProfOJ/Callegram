@@ -9,6 +9,7 @@
 - [Web App Setup](#web-app-setup)
 - [Backend Setup](#backend-setup)
 - [Bot Setup Part 2](#bot-setup-part-2)
+- [Notes](#notes)
 
 ## Introduction
 
@@ -131,3 +132,10 @@ lt --port 5000
    - Send `book` as a short name for the app
 
 And your app now should be fully set up and ready for testing!
+
+
+## Notes
+
+- Both frontend and backend have a lot of comments explaining the code, so if you want to understand how it works, you can read them.
+- Backend codebase is fully covered with docstrings and type hints, so you can use them to understand what each function does.
+- Frontend contains jsdoc comments for most of the generic functions, so you can use them to understand what each function does.

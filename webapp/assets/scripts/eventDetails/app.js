@@ -53,17 +53,16 @@ function showConfirmationDialog(confirmationCallback) {
 
 async function main() {
   Telegram.WebApp.expand();
-
-  const authData = await authUser();
-  if (!authData) {
-    return;
-  }
-
   Telegram.WebApp.BackButton.show();
   Telegram.WebApp.BackButton.onClick(() => {
     Telegram.WebApp.BackButton.hide();
     window.location.href = "/";
   });
+
+  const authData = await authUser();
+  if (!authData) {
+    return;
+  }
 
   let eventId = new URLSearchParams(window.location.search).get("eventId");
   if (!eventId) {

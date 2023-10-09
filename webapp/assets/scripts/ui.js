@@ -21,7 +21,7 @@ function disableFreeDays(busyDays) {
 
 /**
  * Create new DOM element with the specified event model to be inserted into the events list
- * 
+ *
  * @param event event view model
  * @param {boolean} stub indicates whether the element should be an empty one with text "No calls"
  * @returns new dom element ready to be inserted into list
@@ -84,7 +84,7 @@ function createEventElement(event, stub = false) {
 
 /**
  * Add events to the event list
- * 
+ *
  * @param {Array} events array of event view models
  */
 function populateEvents(events) {
@@ -179,14 +179,24 @@ function showTabContent(tabName) {
 }
 
 function switchTab(tab) {
+  const allTabs = document.getElementsByClassName("tab");
   const tabName = tab.getAttribute("data-tab");
+  const tabBarIndicatorContainer = document.getElementById(
+    "tabBarIndicatorContainer"
+  );
   const tabBarIndicator = document.getElementById("tabBarIndicator");
+
+  for (const tab of allTabs) {
+    tab.classList.remove("current");
+  }
+  tab.classList.add("current");
 
   switch (tabName) {
     case "calls":
       callsAnimation.goToAndStop(0);
       callsAnimation.play();
-      tabBarIndicator.style.gridColumn = "1 / 2";
+      tabBarIndicatorContainer.style.marginLeft = "0%";
+      tabBarIndicator.style.width = "50%";
       showTabContent("calls");
       Telegram.WebApp.MainButton.hide();
       break;
@@ -194,7 +204,8 @@ function switchTab(tab) {
     case "profile":
       profileAnimation.goToAndStop(0);
       profileAnimation.play();
-      tabBarIndicator.style.gridColumn = "2 / 3";
+      tabBarIndicatorContainer.style.marginLeft = "50%";
+      tabBarIndicator.style.width = "55%";
       showTabContent("profile");
       Telegram.WebApp.MainButton.show();
       break;
@@ -233,7 +244,7 @@ function initWeekDays() {
 
 /**
  * Refresh status of the user's schedule day view
- * 
+ *
  * @param {Array} windows list of user's schedule windows
  */
 function refreshProfileDayAvailability(windows) {

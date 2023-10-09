@@ -52,7 +52,7 @@
 
       <div id="tabBar">
         <div id="tabs">
-          <div class="tab" data-tab="calls">
+          <div class="tab current" data-tab="calls">
             <div class="tabIcon" id="tabIconCalls"></div>
             <div class="tabTitle">Calls</div>
           </div>
@@ -61,7 +61,9 @@
             <div class="tabTitle">Profile</div>
           </div>
         </div>
-        <div id="tabBarIndicator"></div>
+        <div id="tabBarIndicatorContainer">
+          <div id="tabBarIndicator" class="calls"></div>
+        </div>
       </div>
 
       <div class="tabContent" data-tab-content="calls">

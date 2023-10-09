@@ -143,12 +143,9 @@ async function onDayClicked(element, initialTime = null) {
   ] = populateTimeSlots(availability, selectedDate);
 
   if (initialTime) {
-    const timezoneOffset = new Date().getTimezoneOffset();
-    selectedHour = initialTime.hour;
-    selectedMinute = initialTime.minute;
-
-    console.log(selectedHour, selectedMinute);
-    console.log(timezoneOffset);
+    // in case of editing, we need to select the first available time after the initial time
+    selectedHour = Math.max(selectedHour, initialTime.hour);
+    selectedMinute = Math.max(selectedMinute, initialTime.minute);
 
     const scheduleHourSelector = document.getElementById(
       "scheduleHourSelector"
@@ -235,6 +232,14 @@ async function main() {
           cleanEventDate.getHours() - timezoneOffset / 60,
           cleanEventDate.getMinutes()
         );
+
+        onScheduleDataChanged({
+          name: ownerInfo.name,
+          hour: cleanEventDate.getHours(),
+          minute: cleanEventDate.getMinutes(),
+          date: cleanEventDate,
+          duration: calendarEvent.duration,
+        });
         continue;
       }
       onDayClicked(weekDayElement, {
@@ -246,9 +251,6 @@ async function main() {
 
   onScheduleDataChanged({
     name: ownerInfo.name,
-    hour: cleanEventDate.getHours(),
-    minute: cleanEventDate.getMinutes(),
-    date: cleanEventDate,
     duration: calendarEvent.duration,
   });
 

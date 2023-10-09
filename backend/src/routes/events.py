@@ -2,18 +2,18 @@ import datetime
 from datetime import timedelta
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.schedulers.base import JobLookupError
 from fastapi import APIRouter
 from fastapi import Depends
 
 from dependencies import auth_service, UOWDep, get_notification_service, get_scheduler
 from models.schema import CalendarEventSchemaAdd, CalendarEventSchemaUpdate, ApiResponse
-from models.view import CalendarEvent, User, Schedule
+from models.view import CalendarEvent, Schedule
 from services.auth import AuthService
 from services.event import CalendarEventService
 from services.notification import TelegramNotificationService, send_call_reminder_notification, \
     send_call_started_notification
 from services.user import UserService
-from apscheduler.schedulers.base import JobLookupError
 
 router = APIRouter()
 
@@ -175,13 +175,15 @@ async def create_event(
     min20_notification_time = event.appointment_time - timedelta(minutes=20)
     min10_notification_time = event.appointment_time - timedelta(minutes=10)
 
+    event_hour_minute_id = f"{event.appointment_time.hour}{event.appointment_time.minute}"
+
     scheduler.add_job(
         send_call_reminder_notification, trigger='date',
         kwargs={
             'booking_details': event,
             'minutes_before_start': 20,
         },
-        id=f"{event.id}_20min", run_date=min20_notification_time
+        id=f"{event.id}_{event_hour_minute_id}_20min", run_date=min20_notification_time
     )
     scheduler.add_job(
         send_call_reminder_notification, trigger='date',
@@ -189,14 +191,14 @@ async def create_event(
             'booking_details': event,
             'minutes_before_start': 10,
         },
-        id=f"{event.id}_10min", run_date=min10_notification_time
+        id=f"{event.id}_{event_hour_minute_id}_10min", run_date=min10_notification_time
     )
     scheduler.add_job(
         send_call_started_notification, trigger='date',
         kwargs={
             'booking_details': event,
         },
-        id=f"{event.id}_call_start", run_date=event.appointment_time
+        id=f"{event.id}_{event_hour_minute_id}_call_start", run_date=event.appointment_time
     )
 
     return ApiResponse(
@@ -270,19 +272,20 @@ async def delete_event(
 
     await notification_service.send_call_canceled_of_user_notification(auth.init_data.user.id, event)
     was_sent = await notification_service.send_call_canceled_by_user_notification(auth.init_data.user.id, event)
+    event_hour_minute_id = f"{event.appointment_time.hour}{event.appointment_time.minute}"
 
     try:
-        scheduler.remove_job(f"{event.id}_20min")
+        scheduler.remove_job(f"{event.id}_{event_hour_minute_id}_20min")
     except JobLookupError:  # we don't care about this error
         pass
 
     try:
-        scheduler.remove_job(f"{event.id}_10min")
+        scheduler.remove_job(f"{event.id}_{event_hour_minute_id}_10min")
     except JobLookupError:  # we don't care about this error
         pass
 
     try:
-        scheduler.remove_job(f"{event.id}_call_start")
+        scheduler.remove_job(f"{event.id}_{event_hour_minute_id}_call_start")
     except JobLookupError:  # we don't care about this error
         pass
 
@@ -354,29 +357,63 @@ async def edit_event(
             message="Event is overlapping with existing events in the schedule",
         )
 
+    old_event_hour_minute_id = f"{event.appointment_time.hour}{event.appointment_time.minute}"
+
     event = await CalendarEventService.edit_event(uow, event_id, event_data)
+
+    event_hour_minute_id = f"{event.appointment_time.hour}{event.appointment_time.minute}"
+    min20_notification_time = event.appointment_time - timedelta(minutes=20)
+    min10_notification_time = event.appointment_time - timedelta(minutes=10)
 
     await notification_service.send_call_edited_of_user_notification(auth.init_data.user.id, event)
     was_sent = await notification_service.send_call_edited_by_user_notification(auth.init_data.user.id, event)
 
     try:
-        scheduler.reschedule_job(
-            f"{event.id}_20min", trigger='date', run_date=event.appointment_time - timedelta(minutes=20)
+        scheduler.remove_job(
+            f"{event.id}_{old_event_hour_minute_id}_20min"
         )
     except JobLookupError:  # we don't care about this error
         pass
+
+    scheduler.add_job(
+        send_call_reminder_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+            'minutes_before_start': 20,
+        },
+        id=f"{event.id}_{event_hour_minute_id}_20min", run_date=min20_notification_time
+    )
+
     try:
-        scheduler.reschedule_job(
-            f"{event.id}_10min", trigger='date', run_date=event.appointment_time - timedelta(minutes=10)
+        scheduler.remove_job(
+            f"{event.id}_{old_event_hour_minute_id}_10min"
         )
     except JobLookupError:  # we don't care about this error
         pass
+
+    scheduler.add_job(
+        send_call_reminder_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+            'minutes_before_start': 10,
+        },
+        id=f"{event.id}_{event_hour_minute_id}_10min", run_date=min10_notification_time
+    )
+
     try:
-        scheduler.reschedule_job(
-            f"{event.id}_call_start", trigger='date', run_date=event.appointment_time
+        scheduler.remove_job(
+            f"{event.id}_{old_event_hour_minute_id}_call_start"
         )
     except JobLookupError:  # we don't care about this error
         pass
+
+    scheduler.add_job(
+        send_call_started_notification, trigger='date',
+        kwargs={
+            'booking_details': event,
+        },
+        id=f"{event.id}_{event_hour_minute_id}_call_start", run_date=event.appointment_time
+    )
 
     return ApiResponse(
         success=True,
